@@ -1,0 +1,1601 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Object Modeling Lab: UKM library case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+<style>
+:root{
+  --paper:#F2F6FB; --surface:#FBFDFF; --surface-2:#E6EFF9; --ink:#16263D; --muted:#4A5B73;
+  --heading:#0B2E55; --accent:#1B63A6; --accent-ink:#FBFDFF; --accent-soft:#D6E7F8;
+  --line:#C5D5E8; --rule:#B9D2EC; --ok:#0D6B5B; --ok-bg:#DFF3EE; --warn:#874600; --warn-bg:#FCEEDB;
+  --focus:#C26A00; --shadow:0 1px 0 rgba(11,46,85,.06);
+  --font-body:'Atkinson Hyperlegible', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-head:'Fraunces', Georgia, 'Times New Roman', serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1A2B; --surface:#14243A; --surface-2:#1B2F4A; --ink:#E5EDF7; --muted:#A8BAD2;
+    --heading:#CFE3F8; --accent:#7DB6EE; --accent-ink:#0B1A2C; --accent-soft:#1F3B5E;
+    --line:#2D4567; --rule:#2A4466; --ok:#6FD3BD; --ok-bg:#143C37; --warn:#F3B66E; --warn-bg:#3E2A12;
+    --focus:#FFB54A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1A2B; --surface:#14243A; --surface-2:#1B2F4A; --ink:#E5EDF7; --muted:#A8BAD2;
+  --heading:#CFE3F8; --accent:#7DB6EE; --accent-ink:#0B1A2C; --accent-soft:#1F3B5E;
+  --line:#2D4567; --rule:#2A4466; --ok:#6FD3BD; --ok-bg:#143C37; --warn:#F3B66E; --warn-bg:#3E2A12;
+  --focus:#FFB54A; color-scheme:dark;
+}
+:root[data-contrast="high"]{
+  --paper:#FFFFFF; --surface:#FFFFFF; --surface-2:#F0F0F0; --ink:#000000; --muted:#1A1A1A;
+  --heading:#000000; --accent:#003C7E; --accent-ink:#FFFFFF; --accent-soft:#DDE8F5;
+  --line:#000000; --rule:#000000; --ok:#00502F; --ok-bg:#E6F4EC; --warn:#6B2C00; --warn-bg:#FFF0E0;
+  --focus:#B00060; color-scheme:light;
+}
+:root{ box-sizing:border-box; padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
+html{ scroll-padding-top:calc(env(safe-area-inset-top, 0px) + 140px); font-size:100%; }
+html[data-size="1"]{ font-size:112.5%; }
+html[data-size="2"]{ font-size:125%; }
+html[data-size="3"]{ font-size:137.5%; }
+*,*::before,*::after{ box-sizing:inherit; }
+body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:1.0625rem; line-height:1.15; }
+html[data-spacing="on"] body{ letter-spacing:.04em; word-spacing:.12em; line-height:1.85; }
+html[data-spacing="on"] p, html[data-spacing="on"] li{ max-width:62ch; }
+html[data-motion="reduce"] *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; }
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--surface); }
+a{ color:var(--accent); }
+:focus-visible{ outline:3px solid var(--focus); outline-offset:3px; border-radius:6px; }
+.skip{ position:absolute; left:12px; top:-60px; background:var(--accent); color:var(--accent-ink); padding:10px 16px; border-radius:8px; z-index:20; text-decoration:none; font-weight:700; }
+.skip:focus{ top:calc(env(safe-area-inset-top, 0px) + 10px); }
+.sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+/* Top bar */
+.top{ position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--surface); border-bottom:1px solid var(--line); }
+.top-in{ max-width:1120px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.brand{ display:flex; align-items:center; gap:12px; margin-right:auto; min-width:0; }
+.brand svg{ flex:none; }
+.brand b{ font-family:var(--font-head); font-weight:600; font-size:1.25rem; color:var(--heading); display:block; line-height:1.2; }
+.brand span{ font-size:.875rem; color:var(--muted); }
+.seg{ display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface-2); }
+.seg button{ border:0; background:transparent; color:var(--ink); font:inherit; font-weight:700; min-width:48px; min-height:40px; border-radius:999px; cursor:pointer; padding:0 14px; }
+.seg button[aria-pressed="true"]{ background:var(--accent); color:var(--accent-ink); }
+.btn{ font:inherit; font-weight:700; min-height:44px; padding:0 18px; border-radius:10px; border:1px solid var(--accent); background:var(--accent); color:var(--accent-ink); cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+.btn.sec{ background:transparent; color:var(--accent); }
+.btn.ghost{ background:transparent; color:var(--ink); border-color:var(--line); }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+.btn.sm{ min-height:36px; padding:0 12px; font-size:.9375rem; }
+.a11y{ max-width:1120px; margin:0 auto; padding:0 20px 16px; display:none; }
+.a11y.open{ display:block; }
+.a11y-grid{ display:flex; flex-wrap:wrap; gap:12px 28px; align-items:center; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:14px 18px; }
+.a11y fieldset{ border:0; padding:0; margin:0; display:flex; align-items:center; gap:8px; }
+.a11y legend{ float:left; margin-right:8px; font-weight:700; }
+.sw{ display:inline-flex; align-items:center; gap:10px; cursor:pointer; min-height:44px; }
+.sw input{ width:22px; height:22px; accent-color:var(--accent); }
+
+/* Tabs */
+.tabs{ max-width:1120px; margin:0 auto; padding:0 20px; display:flex; gap:4px; overflow-x:auto; }
+.tabs button{ font:inherit; background:none; border:0; border-bottom:3px solid transparent; color:var(--muted); padding:12px 14px; min-height:48px; cursor:pointer; font-weight:700; white-space:nowrap; }
+.tabs button[aria-current="page"]{ color:var(--heading); border-bottom-color:var(--accent); }
+.prog{ margin-left:auto; align-self:center; font-size:.875rem; color:var(--muted); white-space:nowrap; padding-left:12px; }
+
+main{ max-width:1120px; margin:0 auto; padding:16px 20px 56px; }
+h1,h2,h3{ font-family:var(--font-head); color:var(--heading); font-weight:600; line-height:1.2; }
+h2{ font-size:2rem; margin:0 0 6px; }
+h3{ font-size:1.375rem; margin:16px 0 8px; }
+h4{ font-size:1.0625rem; margin:12px 0 4px; color:var(--heading); }
+p{ margin:0 0 8px; max-width:72ch; }
+li{ line-height:1.25; }
+.lede{ font-size:1.1875rem; color:var(--ink); max-width:64ch; }
+.muted{ color:var(--muted); }
+.row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.grid2{ display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:20px; }
+.panel{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; }
+.note{ border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 16px; border-radius:0 10px 10px 0; max-width:72ch; }
+
+/* Catalogue card hero */
+.catcard{ position:relative; background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:28px 32px 56px 32px;
+  background-image:linear-gradient(var(--surface), var(--surface)), repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--rule) 31px, var(--rule) 32px);
+  background-size:100% 76px, 100% 100%; background-repeat:no-repeat; background-position:0 0, 0 0;
+  box-shadow:0 2px 0 var(--line), 0 4px 0 var(--surface-2), 0 5px 0 var(--line); margin-bottom:28px; }
+.catcard::after{ content:""; position:absolute; left:50%; bottom:16px; width:22px; height:22px; margin-left:-11px; border-radius:50%; background:var(--paper); border:1px solid var(--line); }
+.callno{ display:flex; justify-content:space-between; gap:12px; font-size:.875rem; color:var(--muted); border-bottom:2px solid var(--accent); padding-bottom:8px; margin-bottom:20px; }
+.catcard h2{ font-size:clamp(1.75rem, 3.6vw, 2.75rem); margin-bottom:12px; }
+
+/* Lists & tables */
+.tbl-wrap{ overflow-x:auto; }
+table{ border-collapse:collapse; width:100%; background:var(--surface); }
+th,td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+th{ color:var(--heading); background:var(--surface-2); }
+.actors{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; }
+.actor{ border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--surface); }
+.actor b{ display:block; font-family:var(--font-head); font-size:1.125rem; color:var(--heading); }
+ol.steps{ padding-left:1.4em; }
+ol.steps li{ margin-bottom:6px; }
+
+/* Stepper */
+.stepper{ display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 12px; padding:0; list-style:none; }
+.stepper button{ font:inherit; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; min-height:44px; padding:0 16px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+.stepper button[aria-current="step"]{ border-color:var(--accent); background:var(--accent-soft); color:var(--heading); font-weight:700; }
+.stepper .n{ display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; background:var(--surface-2); font-size:.8125rem; font-weight:700; }
+.stepper .done .n{ background:var(--ok); color:var(--surface); }
+.pager{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; flex-wrap:wrap; }
+
+/* UML object card */
+.uml{ border:2px solid var(--ink); border-radius:10px; background:var(--surface); min-width:200px; overflow:hidden; }
+.uml .hd{ background:var(--accent-soft); padding:6px 12px; font-weight:700; text-align:center; border-bottom:2px solid var(--ink); }
+.uml .cp{ padding:6px 12px; border-bottom:1px solid var(--ink); font-family:var(--font-body); }
+.uml .cp:last-child{ border-bottom:0; }
+.uml u{ text-underline-offset:3px; }
+.inst-list{ display:flex; flex-wrap:wrap; gap:14px; }
+.form{ display:grid; gap:12px; }
+label.f{ display:grid; gap:4px; font-weight:700; }
+input[type=text], select, textarea{ font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--muted); border-radius:8px; padding:9px 11px; min-height:44px; width:100%; }
+textarea{ min-height:90px; resize:vertical; }
+.hint{ font-weight:400; color:var(--muted); font-size:.9375rem; }
+
+/* Simulator */
+.sim, .seqsim{ display:grid; grid-template-columns:minmax(280px, 340px) 1fr; gap:16px; align-items:start; }
+.sim > .dgwrap, .seqsim > .dgwrap{ position:sticky; top:calc(env(safe-area-inset-top, 0px) + 112px); }
+.fit svg.dg{ max-height:calc(100vh - 150px); }
+@media (max-width:820px){ .seqsim{ grid-template-columns:1fr; } .sim > .dgwrap, .seqsim > .dgwrap{ position:static; } .fit svg.dg{ max-height:none; } }
+.objstate{ margin:10px 0 0; padding:0; list-style:none; display:grid; gap:4px; font-size:.9375rem; }
+.objstate li{ display:flex; justify-content:space-between; gap:10px; border-bottom:1px dashed var(--line); padding:3px 0; }
+.objstate b{ color:var(--heading); }
+.steplist{ margin:8px 0 0; padding-left:1.4em; font-size:.9375rem; }
+.steplist li{ margin-bottom:4px; color:var(--muted); }
+.steplist li[aria-current="step"]{ color:var(--ink); font-weight:700; }
+.dg .cur{ stroke:var(--accent); stroke-width:3; }
+.dg .hot{ fill:var(--accent) !important; stroke:var(--accent) !important; stroke-width:3 !important; }
+.dg text.hott{ fill:var(--accent-ink) !important; font-weight:700; }
+.dg .hotl{ stroke:var(--accent) !important; stroke-width:3.6 !important; }
+.dg .seen{ stroke:var(--ok) !important; stroke-width:3 !important; }
+.dg .seenl{ stroke:var(--ok) !important; stroke-width:3 !important; }
+.dg .hlbox rect.cb{ stroke:var(--accent) !important; stroke-width:3.4 !important; }
+.fit2 svg.dg{ margin:0 auto; max-height:max(300px, calc(100vh - 330px)); }
+.simbar{ padding:12px 14px; }
+.simprog{ flex:1; min-width:160px; }
+.simpick{ gap:6px; margin-bottom:8px; }
+.simpick button{ min-height:40px; padding:4px 12px; font-size:.9375rem; }
+.simpick .sec{ color:var(--muted); font-size:.8125rem; margin-right:6px; }
+.simpick button[aria-pressed="true"] .sec{ color:inherit; opacity:.8; }
+.play-ctl label.inl{ display:flex; align-items:center; gap:6px; font-weight:700; }
+.simbar .gtabs{ margin:0; }
+.simbar .gtabs button{ min-height:40px; }
+.vbadge{ display:inline-block; font-size:.75rem; font-weight:700; border:1px solid var(--accent); color:var(--accent); border-radius:999px; padding:1px 8px; margin-left:6px; vertical-align:middle; }
+.dg text.curt{ fill:var(--accent); font-weight:700; }
+@media (max-width:820px){ .sim{ grid-template-columns:1fr; } }
+.msgs{ display:flex; flex-wrap:wrap; gap:8px; }
+.msgs button{ font-family:ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace; font-size:.9375rem; }
+.log{ list-style:none; padding:0; margin:12px 0 0; max-height:220px; overflow:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+.log li{ padding:6px 10px; border-bottom:1px solid var(--line); display:flex; gap:10px; }
+.log li:last-child{ border-bottom:0; }
+.tag{ font-weight:700; white-space:nowrap; }
+.tag.ok{ color:var(--ok); } .tag.no{ color:var(--warn); }
+progress{ width:100%; height:12px; accent-color:var(--accent); }
+.play-ctl{ display:flex; flex-wrap:wrap; gap:10px; align-items:end; }
+.play-ctl label.f{ font-size:.9375rem; }
+.play-ctl select{ width:auto; min-width:140px; }
+.narr{ margin:12px 0 0; }
+
+/* Diagrams */
+.dgwrap{ overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px; }
+svg.dg{ display:block; max-width:100%; height:auto; }
+.dg text{ font-family:var(--font-body); fill:var(--ink); font-size:13px; }
+.dg .t-b{ font-weight:700; }
+.dg .t-s{ font-size:12px; fill:var(--muted); }
+.dg .node{ fill:var(--surface); stroke:var(--ink); stroke-width:1.6; }
+.dg .soft{ fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6; }
+.dg .bound{ fill:none; stroke:var(--ink); stroke-width:1.6; }
+.dg .ln{ stroke:var(--ink); stroke-width:1.6; fill:none; }
+.dg .dash{ stroke:var(--muted); stroke-width:1.4; stroke-dasharray:6 5; fill:none; }
+.dg .ink{ fill:var(--ink); }
+.dg .active rect{ fill:var(--accent); stroke:var(--accent); }
+.dg .active text{ fill:var(--accent-ink); font-weight:700; }
+.dg .lblbg{ fill:var(--surface); }
+.dg .mult{ font-weight:700; fill:var(--accent); }
+.dg .tri{ fill:var(--surface); stroke:var(--ink); stroke-width:1.6; }
+#canvas .dg .cbox{ cursor:grab; touch-action:none; }
+.dg .cbox:focus{ outline:none; }
+.dg .cbox:focus rect.cb{ stroke:var(--focus); stroke-width:3; }
+details.alt{ margin-top:10px; }
+details.alt summary{ cursor:pointer; font-weight:700; min-height:44px; display:flex; align-items:center; }
+.gtabs{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.gtabs button{ font:inherit; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:10px; min-height:44px; padding:0 14px; cursor:pointer; }
+.gtabs button[aria-pressed="true"]{ background:var(--heading); color:var(--surface); border-color:var(--heading); }
+.answers{ font-weight:700; color:var(--heading); margin-bottom:10px; }
+
+/* Fine slider */
+.fines{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:16px; margin-top:14px; }
+.fine-out{ font-family:var(--font-head); font-size:2rem; color:var(--heading); }
+input[type=range]{ width:100%; accent-color:var(--accent); min-height:44px; }
+
+/* Practice */
+.q{ border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px; background:var(--surface); }
+.q legend{ font-weight:700; padding:0 6px; }
+.q fieldset{ border:0; margin:0; padding:0; }
+.opt{ display:flex; gap:10px; align-items:flex-start; padding:8px 6px; border-radius:8px; cursor:pointer; min-height:44px; }
+.opt input{ width:20px; height:20px; margin-top:3px; accent-color:var(--accent); flex:none; }
+.fb{ margin-top:10px; padding:10px 14px; border-radius:8px; }
+.fb.ok{ background:var(--ok-bg); color:var(--ink); border-left:4px solid var(--ok); }
+.fb.no{ background:var(--warn-bg); color:var(--ink); border-left:4px solid var(--warn); }
+.fb b.ok{ color:var(--ok); } .fb b.no{ color:var(--warn); }
+.score{ font-family:var(--font-head); font-size:1.5rem; color:var(--heading); }
+.order{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+.order li{ display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+.order .pos{ font-weight:700; width:28px; text-align:center; color:var(--muted); }
+.order .txt{ flex:1; }
+.order .mv{ display:flex; gap:6px; }
+.order .mv button{ min-width:44px; }
+.mrow{ display:grid; grid-template-columns:minmax(140px, 220px) 1fr; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); }
+@media (max-width:600px){ .mrow{ grid-template-columns:1fr; } }
+
+/* Builder */
+.bld{ display:grid; grid-template-columns:minmax(280px, 360px) 1fr; gap:20px; align-items:start; }
+@media (max-width:900px){ .bld{ grid-template-columns:1fr; } }
+.bld .panel{ padding:18px; }
+.items{ list-style:none; margin:8px 0 0; padding:0; display:grid; gap:6px; }
+.items li{ display:flex; gap:8px; align-items:center; justify-content:space-between; border:1px solid var(--line); border-radius:8px; padding:6px 8px 6px 12px; background:var(--surface); }
+.items li span{ min-width:0; overflow-wrap:anywhere; }
+.canvas{ min-height:420px; }
+.results{ list-style:none; padding:0; margin:10px 0 0; display:grid; gap:6px; }
+.results li{ display:flex; gap:10px; padding:8px 12px; border-radius:8px; }
+.results li.ok{ background:var(--ok-bg); } .results li.no{ background:var(--warn-bg); }
+.results .ic{ font-weight:700; flex:none; width:1.4em; }
+.results li.ok .ic{ color:var(--ok); } .results li.no .ic{ color:var(--warn); }
+pre.code{ background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:14px; overflow:auto; font-size:.875rem; white-space:pre; }
+.ucprev th{ width:30%; }
+footer{ max-width:1120px; margin:0 auto; padding:0 20px 40px; color:var(--muted); font-size:.875rem; }
+@media (max-width:640px){ .brand span{ display:none; } h2{ font-size:1.625rem; } .catcard{ padding:22px 18px 52px; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main" id="skipLink">Skip to content</a>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><rect x="3" y="3" width="34" height="11" rx="6" fill="var(--accent)"/><rect x="3" y="9" width="34" height="5" fill="var(--accent)"/><line x1="9" y1="21" x2="31" y2="21" stroke="var(--muted)" stroke-width="2"/><line x1="3" y1="26" x2="37" y2="26" stroke="var(--ink)" stroke-width="1.5"/><line x1="9" y1="31" x2="25" y2="31" stroke="var(--muted)" stroke-width="2"/></svg>
+      <div><b id="appTitle">Object Modeling Lab</b><span id="appSub">Chapter 6 case study: the UKM library</span></div>
+    </div>
+    <div class="seg" role="group" aria-label="Language / Bahasa">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="bm" aria-pressed="false" lang="ms">BM</button>
+    </div>
+    <button type="button" class="btn ghost" id="a11yBtn" aria-expanded="false" aria-controls="a11yPanel">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.2" fill="currentColor"/><path d="M4 8.5l8 1.8 8-1.8M12 10.3V15m0 0l-3.5 6.5M12 15l3.5 6.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      <span id="a11yLbl">Accessibility</span>
+    </button>
+  </div>
+  <div class="a11y" id="a11yPanel">
+    <div class="a11y-grid">
+      <fieldset>
+        <legend id="sizeLbl">Text size</legend>
+        <div class="seg" role="group" aria-labelledby="sizeLbl">
+          <button type="button" data-size="0" aria-pressed="true">A</button>
+          <button type="button" data-size="1" aria-pressed="false" style="font-size:1.1em">A</button>
+          <button type="button" data-size="2" aria-pressed="false" style="font-size:1.25em">A</button>
+          <button type="button" data-size="3" aria-pressed="false" style="font-size:1.4em">A</button>
+        </div>
+      </fieldset>
+      <label class="sw"><input type="checkbox" id="pContrast"> <span id="contrastLbl">High contrast</span></label>
+      <label class="sw"><input type="checkbox" id="pSpacing"> <span id="spacingLbl">Readable spacing</span></label>
+      <label class="sw"><input type="checkbox" id="pMotion"> <span id="motionLbl">Reduce motion</span></label>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Sections" id="tabs"></nav>
+</header>
+<main id="main" tabindex="-1"></main>
+<div class="sr" aria-live="polite" id="live"></div>
+<footer id="foot"></footer>
+
+<script>
+(function(){
+"use strict";
+var KEY = 'ukm-om-lab-v1';
+var TABS = ['case','learn','simulate','practice','builder'];
+var VERSION = '2.0';
+var ACTIVITIES = ['learn-0','learn-1','learn-2','learn-3','learn-4','sim-usecase','sim-objects','sim-activity','sim-bpm','quiz','match','card','order','which','builder-class','builder-uc'];
+
+/* ---------- state ---------- */
+var S = {
+  lang:'en', tab:'case', learn:0, practice:0, builder:0, gallery:0,
+  prefs:{ size:0, contrast:false, spacing:false, motion:false },
+  progress:{},
+  instances:[ {name:'Aisyah Rahman', id:'A201234', type:'student'}, {name:'Dr. Ravi Kumar', id:'K007712', type:'staff'} ],
+  sim:{ state:'available', reserved:false, renewals:0, log:[], borrower:null, reserver:null }, actor:null,
+  days:5, quiz:{}, quizChecked:false, match:{}, matchChecked:false, card:{}, cardChecked:false,
+  order:null, orderChecked:false, which:{}, whichChecked:false,
+  model:null, uc:{ name:'', actor:'', desc:'', pre:'', steps:'', alt:'', post:'', assume:'' },
+  checkResult:null, ucChecked:false
+};
+function load(){
+  try{ var raw = localStorage.getItem(KEY); if(!raw) return; var d = JSON.parse(raw);
+    ['lang','learn','practice','builder','gallery','prefs','progress','instances','days','model','uc'].forEach(function(k){ if(d[k]!==undefined) S[k]=d[k]; });
+  }catch(e){}
+}
+var saveT=null;
+function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY, JSON.stringify({lang:S.lang,learn:S.learn,practice:S.practice,builder:S.builder,gallery:S.gallery,prefs:S.prefs,progress:S.progress,instances:S.instances,days:S.days,model:S.model,uc:S.uc})); }catch(e){} }, 200); }
+function done(k){ if(!S.progress[k]){ S.progress[k]=true; save(); renderTabs(); } }
+
+/* ---------- i18n ---------- */
+var U = {
+ en:{ skip:'Skip to content', appTitle:'Object Modeling Lab', appSub:'Chapter 6 case study: the UKM library', a11y:'Accessibility', size:'Text size', contrast:'High contrast', spacing:'Readable spacing', motion:'Reduce motion',
+  tabs:{case:'Case study', learn:'Learn', simulate:'Simulate', practice:'Practice', builder:'Builder'}, prog:'of {n} activities done',
+  listen:'Listen', stop:'Stop', prev:'Previous', next:'Next', check:'Check answers', reset:'Try again', correct:'Correct', notQuite:'Not quite',
+  score:'Score', foot:'Teaching resource for Chapter 6, Object Modeling (Tilley & Rosenblatt, 2017). The e-Pinjam case is a simplified teaching scenario, not official library policy. Your progress is saved in this browser only. Version 2.0, 19 November 2026.',
+  textAlt:'Text description of this diagram', up:'Move up', down:'Move down', choose:'Choose…' },
+ bm:{ skip:'Langkau ke kandungan', appTitle:'Makmal Pemodelan Objek', appSub:'Kajian kes Bab 6: perpustakaan UKM', a11y:'Kebolehcapaian', size:'Saiz teks', contrast:'Kontras tinggi', spacing:'Jarak mudah baca', motion:'Kurangkan animasi',
+  tabs:{case:'Kajian kes', learn:'Belajar', simulate:'Simulasi', practice:'Latihan', builder:'Pembina'}, prog:'daripada {n} aktiviti selesai',
+  listen:'Dengar', stop:'Henti', prev:'Sebelumnya', next:'Seterusnya', check:'Semak jawapan', reset:'Cuba lagi', correct:'Betul', notQuite:'Belum tepat',
+  score:'Markah', foot:'Sumber pengajaran untuk Bab 6, Pemodelan Objek (Tilley & Rosenblatt, 2017). Kes e-Pinjam ialah senario pengajaran yang dipermudah, bukan dasar rasmi perpustakaan. Versi 2.0, 19 November 2026. Kemajuan anda disimpan dalam pelayar ini sahaja.',
+  textAlt:'Penerangan teks rajah ini', up:'Naik', down:'Turun', choose:'Pilih…' }
+};
+function t(k){ return U[S.lang][k]; }
+function L(o){ return (o && typeof o === 'object') ? (o[S.lang] || o.en) : o; }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function announce(msg){ var el=document.getElementById('live'); el.textContent=''; setTimeout(function(){ el.textContent=msg; }, 30); }
+
+/* ---------- speech ---------- */
+var canSpeak = ('speechSynthesis' in window) && typeof SpeechSynthesisUtterance !== 'undefined';
+var VOICES=[];
+function loadVoices(){ try{ VOICES=speechSynthesis.getVoices()||[]; }catch(e){} }
+if(canSpeak){ loadVoices(); try{ speechSynthesis.addEventListener('voiceschanged', loadVoices); }catch(e){} }
+function pickVoice(lang){ var l=lang.toLowerCase(), p=l.slice(0,2), f=function(pre){ return VOICES.filter(function(v){ return v.lang && v.lang.toLowerCase().replace('_','-').indexOf(pre)===0; })[0]; };
+  return f(l) || f(p) || (p==='ms' ? f('id') : null) || null; }
+function speak(text){ if(!canSpeak) return; text=String(text||'').replace(/\s+/g,' ').trim(); if(!text) return;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  setTimeout(function(){ try{ var lang=S.lang==='bm'?'ms-MY':'en-GB', u=new SpeechSynthesisUtterance(text), v=pickVoice(lang); u.lang=lang; if(v) u.voice=v; u.rate=.95; try{ speechSynthesis.resume(); }catch(e){} speechSynthesis.speak(u); }catch(e){} }, 120); }
+function stopSpeak(){ if(canSpeak){ try{ speechSynthesis.cancel(); }catch(e){} } }
+function listenBtns(target){ if(!canSpeak) return ''; return '<div class="row" style="margin:6px 0 14px"><button type="button" class="btn sec sm" data-act="speak" data-target="'+target+'">'+
+  '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8a5 5 0 010 8M18.5 5.5a8.5 8.5 0 010 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>'+t('listen')+'</button>'+
+  '<button type="button" class="btn ghost sm" data-act="stopspeak">'+t('stop')+'</button></div>'; }
+
+/* ---------- content: case ---------- */
+var CASE = {
+ call:{en:'Call no. QA 76.9 .S88', bm:'No. panggilan QA 76.9 .S88'},
+ kind:{en:'Teaching scenario', bm:'Senario pengajaran'},
+ title:{en:'e-Pinjam: a loan system for Perpustakaan Tun Sri Lanang', bm:'e-Pinjam: sistem pinjaman untuk Perpustakaan Tun Sri Lanang'},
+ lede:{en:'UKM’s main library wants to replace its paper-and-spreadsheet loan process with an online system. You are the systems analyst. Use this case to practise every object modeling technique in Chapter 6.',
+       bm:'Perpustakaan utama UKM ingin menggantikan proses pinjaman berasaskan kertas dan hamparan kerja dengan sistem dalam talian. Anda ialah penganalisis sistem. Gunakan kes ini untuk berlatih setiap teknik pemodelan objek dalam Bab 6.'},
+ disclaimer:{en:'The library is real; the rules below are simplified for teaching and are not official library policy.', bm:'Perpustakaan ini wujud; peraturan di bawah dipermudah untuk pengajaran dan bukan dasar rasmi perpustakaan.'},
+ bgH:{en:'The problem today', bm:'Masalah semasa'},
+ bg:{en:'Thousands of students and staff borrow books every semester. Counter staff record loans in one spreadsheet, reservations on paper slips and fines in another file. Copies go missing, fines are disputed, and nobody can see which titles are in demand. The library director has asked for a logical model of the new system before any code is written.',
+     bm:'Ribuan pelajar dan staf meminjam buku setiap semester. Staf kaunter merekod pinjaman dalam satu hamparan kerja, tempahan pada slip kertas dan denda dalam fail lain. Naskhah hilang, denda dipertikaikan, dan tiada siapa tahu judul mana yang paling diperlukan. Pengarah perpustakaan meminta model logik sistem baharu sebelum sebarang kod ditulis.'},
+ actorsH:{en:'Who uses e-Pinjam', bm:'Siapa yang menggunakan e-Pinjam'},
+ actors:[
+  {n:{en:'Member',bm:'Ahli'}, d:{en:'A student or staff member who searches the catalogue, borrows, renews and reserves items, and pays fines.', bm:'Pelajar atau staf yang mencari katalog, meminjam, memperbaharui dan menempah item, serta membayar denda.'}},
+  {n:{en:'Librarian',bm:'Pustakawan'}, d:{en:'Checks items out and in at the counter, manages the catalogue and produces overdue reports.', bm:'Merekod pinjaman dan pemulangan di kaunter, mengurus katalog dan menjana laporan lewat.'}},
+  {n:{en:'Payment gateway',bm:'Gerbang pembayaran'}, d:{en:'An external system that processes online fine payments. It is an actor because it sits outside e-Pinjam.', bm:'Sistem luaran yang memproses bayaran denda dalam talian. Ia ialah aktor kerana berada di luar e-Pinjam.'}}
+ ],
+ rulesH:{en:'Business rules', bm:'Peraturan perniagaan'},
+ rulesHead:[{en:'Rule',bm:'Peraturan'},{en:'Student',bm:'Pelajar'},{en:'Staff',bm:'Staf'}],
+ rules:[
+  [{en:'Loan limit',bm:'Had pinjaman'},{en:'5 items',bm:'5 item'},{en:'10 items',bm:'10 item'}],
+  [{en:'Loan period',bm:'Tempoh pinjaman'},{en:'14 days',bm:'14 hari'},{en:'30 days',bm:'30 hari'}],
+  [{en:'Overdue fine per day',bm:'Denda lewat sehari'},{en:'RM0.20',bm:'RM0.20'},{en:'RM0.50',bm:'RM0.50'}],
+  [{en:'Renewals',bm:'Pembaharuan'},{en:'Up to 2, only if nobody has reserved the copy and it is not overdue',bm:'Sehingga 2 kali, hanya jika tiada tempahan dan belum lewat'},{en:'Same as students',bm:'Sama seperti pelajar'}],
+  [{en:'Borrowing blocked',bm:'Pinjaman disekat'},{en:'When unpaid fines exceed RM10',bm:'Apabila denda tertunggak melebihi RM10'},{en:'Same as students',bm:'Sama seperti pelajar'}],
+  [{en:'Reserved copy',bm:'Naskhah ditempah'},{en:'Held at the counter for 3 days after return',bm:'Disimpan di kaunter selama 3 hari selepas dipulangkan'},{en:'Same as students',bm:'Sama seperti pelajar'}]
+ ],
+ copyH:{en:'One title, many copies', bm:'Satu judul, banyak naskhah'},
+ copy:{en:'A book (title, author, ISBN) can have many physical copies. Each copy has its own barcode and status, and it is the copy, not the book, that is borrowed. Getting this distinction right is the key modeling decision in this case.',
+       bm:'Satu buku (judul, pengarang, ISBN) boleh mempunyai banyak naskhah fizikal. Setiap naskhah mempunyai kod bar dan status sendiri, dan naskhah itulah, bukan buku, yang dipinjam. Membezakan kedua-duanya dengan betul ialah keputusan pemodelan utama dalam kes ini.'},
+ reqH:{en:'What the system must do', bm:'Apa yang mesti dilakukan oleh sistem'},
+ reqs:[{en:'Search the catalogue',bm:'Mencari katalog'},{en:'Borrow an item',bm:'Meminjam item'},{en:'Return an item',bm:'Memulangkan item'},{en:'Renew a loan',bm:'Memperbaharui pinjaman'},{en:'Reserve an item',bm:'Menempah item'},{en:'Pay a fine',bm:'Membayar denda'},{en:'Manage the catalogue',bm:'Mengurus katalog'},{en:'Produce an overdue report',bm:'Menjana laporan lewat'}],
+ newH:{en:'What’s new in version 2.0', bm:'Apa yang baharu dalam versi 2.0'},
+ news:[
+  {en:'A new Simulate tab plays every UML diagram in Chapter 6 step by step: use case, class (objects at run time), sequence, state transition, activity and business process model.', bm:'Tab Simulasi baharu memainkan setiap rajah UML dalam Bab 6 langkah demi langkah: kes guna, kelas (objek semasa larian), jujukan, peralihan keadaan, aktiviti dan model proses perniagaan.'},
+  {en:'Every simulation has Back, Next step, Auto play, Reset and a speed control, with spoken and on-screen explanations of each step.', bm:'Setiap simulasi mempunyai Undur, Langkah seterusnya, Main automatik, Tetapkan semula dan kawalan kelajuan, dengan penerangan setiap langkah secara lisan dan pada skrin.'},
+  {en:'Simulations use the members you create in Learn step 1, so their names, classes and fines carry through.', bm:'Simulasi menggunakan ahli yang anda cipta dalam langkah 1 Belajar, jadi nama, kelas dan denda mereka dibawa bersama.'}
+ ],
+ missionH:{en:'Your path through this lab', bm:'Laluan anda dalam makmal ini'},
+ mission:[
+  {en:'Learn: meet the objects of e-Pinjam, send messages to a book copy and watch its state change, then explore all five UML diagrams for the case.', bm:'Belajar: kenali objek e-Pinjam, hantar mesej kepada naskhah buku dan lihat keadaannya berubah, kemudian terokai kelima-lima rajah UML untuk kes ini.'},
+  {en:'Simulate: watch each Chapter 6 diagram come alive, one step at a time, using your own members.', bm:'Simulasi: lihat setiap rajah Bab 6 hidup, satu langkah demi satu langkah, menggunakan ahli anda sendiri.'},
+  {en:'Practice: five short activities with instant feedback, from concepts to cardinality and message order.', bm:'Latihan: lima aktiviti ringkas dengan maklum balas segera, daripada konsep hingga kardinaliti dan susunan mesej.'},
+  {en:'Builder: draw your own class diagram and write a use case description, then check them against the case.', bm:'Pembina: lukis rajah kelas anda sendiri dan tulis perihalan kes guna, kemudian semak dengan kes.'}
+ ],
+ start:{en:'Start learning', bm:'Mula belajar'}
+};
+
+/* ---------- diagrams ---------- */
+function marker(id){ return '<defs><marker id="'+id+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ink"/></marker><marker id="'+id+'o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="none" stroke="currentColor" style="stroke:var(--ink)" stroke-width="1.6"/></marker></defs>'; }
+function txt(x,y,s,cls,anchor){ return '<text x="'+x+'" y="'+y+'"'+(cls?' class="'+cls+'"':'')+(anchor?' text-anchor="'+anchor+'"':'')+'>'+esc(s)+'</text>'; }
+function stick(x,y,label){ return '<g aria-hidden="true"><circle cx="'+x+'" cy="'+y+'" r="11" class="soft"/><path d="M'+x+' '+(y+11)+'v32M'+(x-20)+' '+(y+22)+'h40M'+x+' '+(y+43)+'l-16 26M'+x+' '+(y+43)+'l16 26" class="ln"/></g>'+txt(x,y+90,label,'t-b','middle'); }
+
+var UCN = [{en:'Search catalogue',bm:'Cari katalog'},{en:'Borrow item',bm:'Pinjam item'},{en:'Return item',bm:'Pulang item'},{en:'Renew loan',bm:'Perbaharui pinjaman'},{en:'Reserve item',bm:'Tempah item'},{en:'Pay fine',bm:'Bayar denda'},{en:'Manage catalogue',bm:'Urus katalog'},{en:'Produce overdue report',bm:'Jana laporan lewat'}];
+function ucSVG(){
+  var ys=[66,112,158,204,250,296,342,388], s='';
+  s+='<rect x="215" y="16" width="350" height="408" rx="12" class="bound"/>'+txt(232,40,'e-Pinjam','t-b');
+  ys.forEach(function(y,i){ s+='<ellipse cx="390" cy="'+y+'" rx="140" ry="19" class="soft"/>'+txt(390,y+4,L(UCN[i]),'','middle'); });
+  s+=stick(95,140,L({en:'Member',bm:'Ahli'}));
+  var nm=S.instances.slice(0,3).map(objName).join(', ')+(S.instances.length>3?', +'+(S.instances.length-3):'');
+  if(nm) s+=txt(95,250,L({en:'e.g. ',bm:'cth. '})+nm,'t-s','middle');
+  [0,1,3,4,5].forEach(function(i){ s+='<line x1="117" y1="178" x2="250" y2="'+ys[i]+'" class="ln"/>'; });
+  s+=stick(690,110,L({en:'Librarian',bm:'Pustakawan'}));
+  [1,2,6,7].forEach(function(i){ s+='<line x1="668" y1="148" x2="530" y2="'+ys[i]+'" class="ln"/>'; });
+  s+='<rect x="620" y="290" width="140" height="58" rx="6" class="node"/>'+txt(690,312,'«system»','t-s','middle')+txt(690,334,L({en:'Payment gateway',bm:'Gerbang bayaran'}),'t-b','middle');
+  s+='<line x1="620" y1="312" x2="530" y2="'+ys[5]+'" class="ln"/>';
+  return '<svg class="dg" viewBox="0 0 780 440" width="780" height="440" role="img" aria-label="'+esc(L({en:'Use case diagram for e-Pinjam',bm:'Rajah kes guna e-Pinjam'}))+'">'+s+'</svg>';
+}
+
+/* class diagram renderer (shared with builder) */
+function boxDims(c){ var lines=[c.name].concat(c.attrs,c.methods); var m=6; lines.forEach(function(l){ m=Math.max(m,String(l).length); });
+  var w=Math.max(150, Math.round(m*7.4+28)); var na=Math.max(c.attrs.length,1), nm=Math.max(c.methods.length,1);
+  return { w:w, h: c.obj ? 32+na*18+10 : 32+na*18+10+nm*18+10 }; }
+function clip(b,tx,ty){ var cx=b.x+b.w/2, cy=b.y+b.h/2, dx=tx-cx, dy=ty-cy; if(!dx&&!dy) return {x:cx,y:cy};
+  var sx=dx?(b.w/2)/Math.abs(dx):Infinity, sy=dy?(b.h/2)/Math.abs(dy):Infinity, k=Math.min(sx,sy); return {x:cx+dx*k, y:cy+dy*k}; }
+function r1(n){ return Math.round(n*10)/10; }
+function classSVG(model, interactive, label){
+  var B={}, W=0, H=0;
+  model.classes.forEach(function(c){ var d=boxDims(c); B[c.id]={id:c.id,name:c.name,attrs:c.attrs,methods:c.methods,x:c.x,y:c.y,w:d.w,h:d.h}; W=Math.max(W,c.x+d.w); H=Math.max(H,c.y+d.h); });
+  W=Math.max(W+30,640); H=Math.max(H+30,320);
+  var lines='', labs='';
+  model.rels.forEach(function(r){ var a=B[r.from], b=B[r.to]; if(!a||!b||a===b) return;
+    var ac={x:a.x+a.w/2,y:a.y+a.h/2}, bc={x:b.x+b.w/2,y:b.y+b.h/2}, p1=clip(a,bc.x,bc.y), p2=clip(b,ac.x,ac.y);
+    var dx=p2.x-p1.x, dy=p2.y-p1.y, len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len, px=-uy, py=ux;
+    if(r.kind==='instance'){ lines+='<line x1="'+r1(p1.x)+'" y1="'+r1(p1.y)+'" x2="'+r1(p2.x)+'" y2="'+r1(p2.y)+'" class="dash" style="stroke:var(--ink)"/>';
+      lines+='<polyline points="'+r1(p2.x-ux*12+px*7)+','+r1(p2.y-uy*12+py*7)+' '+r1(p2.x)+','+r1(p2.y)+' '+r1(p2.x-ux*12-px*7)+','+r1(p2.y-uy*12-py*7)+'" class="ln"/>'; return; }
+    if(r.kind==='inherit'){ var bx=p2.x-ux*16, by=p2.y-uy*16;
+      lines+='<line x1="'+r1(p1.x)+'" y1="'+r1(p1.y)+'" x2="'+r1(bx)+'" y2="'+r1(by)+'" class="ln"/>';
+      lines+='<polygon points="'+r1(p2.x)+','+r1(p2.y)+' '+r1(bx+px*9)+','+r1(by+py*9)+' '+r1(bx-px*9)+','+r1(by-py*9)+'" class="tri"/>';
+    } else {
+      lines+='<line x1="'+r1(p1.x)+'" y1="'+r1(p1.y)+'" x2="'+r1(p2.x)+'" y2="'+r1(p2.y)+'" class="ln'+(r.hl?' hotl':'')+'"/>';
+      if(r.m1) labs+=txt(r1(p1.x+ux*18+px*13), r1(p1.y+uy*18+py*13+4), r.m1, 'mult','middle');
+      if(r.m2) labs+=txt(r1(p2.x-ux*18+px*13), r1(p2.y-uy*18+py*13+4), r.m2, 'mult','middle');
+      if(r.label){ var mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2, lw=r.label.length*7+12; labs+='<rect x="'+r1(mx-lw/2)+'" y="'+r1(my-11)+'" width="'+lw+'" height="20" rx="4" class="lblbg"/>'+txt(r1(mx),r1(my+4),r.label,'t-s','middle'); }
+    }
+  });
+  var boxes='';
+  model.classes.forEach(function(c){ var b=B[c.id], y=32, s='';
+    s+='<rect class="cb node" width="'+b.w+'" height="'+b.h+'" rx="8"/>';
+    s+='<rect width="'+b.w+'" height="32" rx="8" class="soft" style="stroke:none"/><rect y="16" width="'+b.w+'" height="16" class="soft" style="stroke:none"/><rect class="cb" width="'+b.w+'" height="'+b.h+'" rx="8" style="fill:none;stroke:var(--ink);stroke-width:1.6"/>';
+    s+= c.obj ? '<text x="'+(b.w/2)+'" y="21" class="t-b" text-anchor="middle" text-decoration="underline">'+esc(b.name)+'</text>' : txt(b.w/2,21,b.name,'t-b','middle');
+    s+='<line x1="0" y1="32" x2="'+b.w+'" y2="32" class="ln"/>';
+    var na=Math.max(b.attrs.length,1); b.attrs.forEach(function(a,i){ s+=txt(12,32+18*(i+1),a); });
+    y=32+na*18+10; if(!c.obj) s+='<line x1="0" y1="'+y+'" x2="'+b.w+'" y2="'+y+'" class="ln"/>';
+    b.methods.forEach(function(m,i){ s+=txt(12,y+18*(i+1),m); });
+    var aria=esc(b.name+'. '+(b.attrs.length? L({en:'Attributes: ',bm:'Atribut: '})+b.attrs.join(', ')+'. ':'')+(b.methods.length? L({en:'Methods: ',bm:'Kaedah: '})+b.methods.join(', '):''));
+    boxes+='<g class="cbox'+(c.hl?' hlbox':'')+'"'+(c.dim?' opacity=".45"':'')+' data-id="'+esc(c.id)+'" transform="translate('+b.x+','+b.y+')"'+(interactive?' tabindex="0" role="button" aria-roledescription="'+esc(L({en:'movable class',bm:'kelas boleh alih'}))+'" aria-label="'+aria+'"':' aria-label="'+aria+'"')+'>'+s+'</g>';
+  });
+  return '<svg class="dg" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="'+(interactive?'group':'img')+'" aria-label="'+esc(label||'')+'">'+lines+boxes+labs+'</svg>';
+}
+function modelAnswer(){ return {
+  classes:[
+   {id:'member',name:'Member',attrs:['memberId','name','maxLoans'],methods:['borrow()','calculateFine(days)'],x:30,y:24},
+   {id:'student',name:'Student',attrs:['matricNo','faculty'],methods:['calculateFine(days)'],x:10,y:300},
+   {id:'staff',name:'Staff',attrs:['staffNo','department'],methods:['calculateFine(days)'],x:200,y:300},
+   {id:'loan',name:'Loan',attrs:['loanDate','dueDate','renewals'],methods:['renew()','close()'],x:330,y:24},
+   {id:'copy',name:'BookCopy',attrs:['barcode','status'],methods:['checkOut()','checkIn()'],x:640,y:24},
+   {id:'book',name:'Book',attrs:['isbn','title','author'],methods:['search()'],x:640,y:300},
+   {id:'res',name:'Reservation',attrs:['placedOn','holdUntil'],methods:['cancel()'],x:400,y:300}
+  ],
+  rels:[
+   {from:'student',to:'member',kind:'inherit'},{from:'staff',to:'member',kind:'inherit'},
+   {from:'member',to:'loan',kind:'assoc',label:'has',m1:'1',m2:'0..*'},
+   {from:'loan',to:'copy',kind:'assoc',label:'covers',m1:'0..*',m2:'1'},
+   {from:'book',to:'copy',kind:'assoc',label:'has copies',m1:'1',m2:'1..*'},
+   {from:'member',to:'res',kind:'assoc',label:'places',m1:'1',m2:'0..*'},
+   {from:'res',to:'book',kind:'assoc',label:'for',m1:'0..*',m2:'1'}
+  ]}; }
+
+function seqSVG(){
+  var am=instBy(S.sim.borrower)||instBy(actingId()); var mem= am ? (objName(am).slice(0,12)+' : '+CLS[am.type]) : ':Member';
+  var P=[':Librarian',mem,':BookCopy',':Loan'], xs=[95,290,485,680], s=marker('sq');
+  P.forEach(function(p,i){ s+='<rect x="'+(xs[i]-85)+'" y="20" width="170" height="40" rx="6" class="soft"/>'+txt(xs[i],45,p,'t-b','middle')+'<line x1="'+xs[i]+'" y1="60" x2="'+xs[i]+'" y2="410" class="dash"/>'; });
+  var M=[[0,1,'checkStatus()',0],[1,0,L({en:'status OK',bm:'status OK'}),1],[0,2,'checkOut(member)',0],[2,3,'«create» Loan(dueDate)',0],[3,1,'addLoan(loan)',0],[2,0,L({en:'due date slip',bm:'slip tarikh akhir'}),1]];
+  M.forEach(function(m,i){ var y=105+i*50, x1=m[0]<m[1]?xs[m[0]]+6:xs[m[0]]-6, x2=m[0]<m[1]?xs[m[1]]-6:xs[m[1]]+6;
+    s+='<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" class="'+(m[3]?'dash':'ln')+'" style="stroke:var(--ink)" marker-end="url(#sq'+(m[3]?'o':'')+')"/>';
+    s+=txt((xs[m[0]]+xs[m[1]])/2,y-8,(i+1)+'  '+m[2],'','middle'); });
+  s+='<rect x="89" y="92" width="12" height="270" class="node"/><rect x="479" y="192" width="12" height="170" class="node"/>';
+  return '<svg class="dg" viewBox="0 0 780 420" width="780" height="420" role="img" aria-label="'+esc(L({en:'Sequence diagram for Borrow item',bm:'Rajah jujukan untuk Pinjam item'}))+'">'+s+'</svg>';
+}
+
+var ST = {
+ available:{x:40,y:170,l:{en:'Available',bm:'Tersedia'}}, onloan:{x:300,y:170,l:{en:'On loan',bm:'Dipinjam'}}, overdue:{x:560,y:170,l:{en:'Overdue',bm:'Lewat'}},
+ onhold:{x:300,y:330,l:{en:'On hold',bm:'Disimpan'}}, lost:{x:560,y:330,l:{en:'Lost',bm:'Hilang'}}
+};
+function stSVG(active){
+  var s=marker('st'+(active?'a':'')), id='st'+(active?'a':'');
+  function e(d,lab,x,y,anchor){ return '<path d="'+d+'" class="ln" marker-end="url(#'+id+')"/>'+txt(x,y,lab,'t-s',anchor||'middle'); }
+  s+='<circle cx="16" cy="198" r="8" class="ink"/><path d="M24 198H38" class="ln" marker-end="url(#'+id+')"/>';
+  s+=e('M190 186H298','checkOut()',245,178);
+  s+=e('M300 212H192','checkIn()',245,232);
+  s+=e('M450 198H558',L({en:'due date passes',bm:'tarikh akhir berlalu'}),505,188);
+  s+=e('M635 170C620 66 140 66 115 168','checkIn()',375,82);
+  s+=e('M345 170C335 126 405 126 397 168','renew()',375,122);
+  s+=e('M355 226V328','checkIn() '+L({en:'[reserved]',bm:'[ditempah]'}),348,282,'end');
+  s+=e('M395 330V228','checkOut()',402,282,'start');
+  s+=e('M300 345L118 228',L({en:'hold expires',bm:'tempoh simpan tamat'}),170,316,'middle');
+  s+=e('M600 226L452 336','checkIn() '+L({en:'[reserved]',bm:'[ditempah]'}),520,300,'end');
+  s+=e('M650 226V328','markLost()',657,282,'start');
+  Object.keys(ST).forEach(function(k){ var n=ST[k]; s+='<g class="'+(k===active?'active':'')+'"><rect x="'+n.x+'" y="'+n.y+'" width="150" height="56" rx="28" class="node"/>'+txt(n.x+75,n.y+33,L(n.l),'t-b','middle')+'</g>'; });
+  return '<svg class="dg" viewBox="0 0 760 400" width="760" height="400" role="img" aria-label="'+esc(L({en:'State transition diagram for BookCopy',bm:'Rajah peralihan keadaan untuk BookCopy'})+(active?'. '+L({en:'Current state: ',bm:'Keadaan semasa: '})+L(ST[active].l):''))+'">'+s+'</svg>';
+}
+
+function actSVG(){
+  var s=marker('ac');
+  function act(x,y,w,h,a,b){ return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="20" class="soft"/>'+(b? txt(x+w/2,y+h/2-3,a,'','middle')+txt(x+w/2,y+h/2+14,b,'','middle') : txt(x+w/2,y+h/2+5,a,'','middle')); }
+  function dia(cx,cy){ return '<polygon points="'+cx+','+(cy-30)+' '+(cx+38)+','+cy+' '+cx+','+(cy+30)+' '+(cx-38)+','+cy+'" class="node"/>'; }
+  function ar(d){ return '<path d="'+d+'" class="ln" marker-end="url(#ac)"/>'; }
+  s+='<circle cx="260" cy="26" r="12" class="ink"/>'+ar('M260 38V58');
+  s+=act(150,60,220,44,L({en:'Scan returned copy',bm:'Imbas naskhah dipulangkan'}));
+  s+=ar('M260 104V128')+dia(260,160)+txt(214,164,L({en:'Overdue?',bm:'Lewat?'}),'t-b','end');
+  s+=ar('M298 160H418')+txt(358,152,L({en:'yes',bm:'ya'}),'t-s','middle');
+  s+=act(420,132,230,56,L({en:'Calculate fine by',bm:'Kira denda mengikut'}),L({en:'member type',bm:'jenis ahli'}));
+  s+=ar('M260 190V248')+txt(268,224,L({en:'no',bm:'tidak'}),'t-s','start');
+  s+='<polygon points="260,250 280,270 260,290 240,270" class="node"/>';
+  s+=ar('M535 188V270H282');
+  s+=ar('M260 290V318')+act(150,320,220,44,L({en:'Update copy status',bm:'Kemas kini status naskhah'}));
+  s+=ar('M260 364V388')+dia(260,420)+txt(214,424,L({en:'Reserved?',bm:'Ditempah?'}),'t-b','end');
+  s+=ar('M298 420H418')+txt(358,412,L({en:'yes',bm:'ya'}),'t-s','middle');
+  s+=act(420,392,230,56,L({en:'Place on hold shelf,',bm:'Letak di rak simpanan,'}),L({en:'notify reserver',bm:'maklumkan penempah'}));
+  s+=ar('M260 450V498')+txt(268,478,L({en:'no',bm:'tidak'}),'t-s','start');
+  s+=act(150,500,220,44,L({en:'Return copy to shelf',bm:'Kembalikan naskhah ke rak'}));
+  s+=ar('M260 544V572')+ar('M535 448V590H278');
+  s+='<circle cx="260" cy="590" r="14" fill="none" style="stroke:var(--ink)" stroke-width="2"/><circle cx="260" cy="590" r="8" class="ink"/>';
+  return '<svg class="dg" viewBox="0 0 680 620" width="680" height="620" role="img" aria-label="'+esc(L({en:'Activity diagram for Return item',bm:'Rajah aktiviti untuk Pulang item'}))+'">'+s+'</svg>';
+}
+
+var GALLERY = [
+ {n:{en:'Use case diagram',bm:'Rajah kes guna'}, q:{en:'Answers: who uses e-Pinjam, and for which goals?',bm:'Menjawab: siapa menggunakan e-Pinjam, dan untuk matlamat apa?'}, svg:ucSVG,
+  alt:{en:'A system boundary named e-Pinjam contains eight use cases: Search catalogue, Borrow item, Return item, Renew loan, Reserve item, Pay fine, Manage catalogue and Produce overdue report. The Member actor connects to Search catalogue, Borrow item, Renew loan, Reserve item and Pay fine. The Librarian connects to Borrow item, Return item, Manage catalogue and Produce overdue report. The external Payment gateway system connects to Pay fine.',
+       bm:'Sempadan sistem bernama e-Pinjam mengandungi lapan kes guna: Cari katalog, Pinjam item, Pulang item, Perbaharui pinjaman, Tempah item, Bayar denda, Urus katalog dan Jana laporan lewat. Aktor Ahli bersambung kepada Cari katalog, Pinjam item, Perbaharui pinjaman, Tempah item dan Bayar denda. Pustakawan bersambung kepada Pinjam item, Pulang item, Urus katalog dan Jana laporan lewat. Sistem luaran Gerbang pembayaran bersambung kepada Bayar denda.'}},
+ {n:{en:'Class diagram',bm:'Rajah kelas'}, q:{en:'Answers: which things exist, and how many relate to each other?',bm:'Menjawab: apakah benda yang wujud, dan berapa banyak berkait antara satu sama lain?'}, svg:function(){ return classSVG(answerWithObjects(), false, L({en:'Class diagram for e-Pinjam with your members as objects',bm:'Rajah kelas e-Pinjam dengan ahli anda sebagai objek'})); },
+  alt:{en:'Student and Staff inherit from Member. One Member has zero or many Loans. Each Loan covers exactly one BookCopy, and a BookCopy can appear in zero or many Loans over time. One Book has one or many BookCopies. One Member places zero or many Reservations, and each Reservation is for one Book.',
+       bm:'Student dan Staff mewarisi Member. Seorang Member mempunyai sifar atau banyak Loan. Setiap Loan melibatkan tepat satu BookCopy, dan satu BookCopy boleh muncul dalam sifar atau banyak Loan dari semasa ke semasa. Satu Book mempunyai satu atau banyak BookCopy. Seorang Member membuat sifar atau banyak Reservation, dan setiap Reservation adalah untuk satu Book.'}},
+ {n:{en:'Sequence diagram',bm:'Rajah jujukan'}, q:{en:'Answers: in what order do objects exchange messages when an item is borrowed?',bm:'Menjawab: dalam susunan apakah objek bertukar mesej apabila item dipinjam?'}, svg:seqSVG,
+  alt:{en:'Four lifelines: Librarian, Member, BookCopy and Loan. 1, Librarian sends checkStatus() to Member. 2, Member replies status OK. 3, Librarian sends checkOut(member) to BookCopy. 4, BookCopy creates a new Loan with a due date. 5, Loan sends addLoan(loan) to Member. 6, BookCopy returns a due date slip to the Librarian.',
+       bm:'Empat garis hayat: Librarian, Member, BookCopy dan Loan. 1, Librarian menghantar checkStatus() kepada Member. 2, Member membalas status OK. 3, Librarian menghantar checkOut(member) kepada BookCopy. 4, BookCopy mencipta Loan baharu dengan tarikh akhir. 5, Loan menghantar addLoan(loan) kepada Member. 6, BookCopy memulangkan slip tarikh akhir kepada Librarian.'}},
+ {n:{en:'State transition diagram',bm:'Rajah peralihan keadaan'}, q:{en:'Answers: how does one book copy change over its life?',bm:'Menjawab: bagaimana satu naskhah buku berubah sepanjang hayatnya?'}, svg:function(){ return stSVG(S.sim.state); },
+  alt:{en:'A copy starts Available. checkOut() moves it to On loan; checkIn() returns it to Available. renew() keeps it On loan. When the due date passes it becomes Overdue; checkIn() returns it to Available, or to On hold if reserved. From On loan, checkIn() with a reservation moves it to On hold. From On hold, checkOut() by the reserver moves it to On loan, and if the hold expires it becomes Available. markLost() moves an Overdue copy to Lost.',
+       bm:'Naskhah bermula Tersedia. checkOut() menukarnya kepada Dipinjam; checkIn() mengembalikannya kepada Tersedia. renew() mengekalkannya Dipinjam. Apabila tarikh akhir berlalu ia menjadi Lewat; checkIn() mengembalikannya kepada Tersedia, atau Disimpan jika ditempah. Daripada Dipinjam, checkIn() dengan tempahan menukarnya kepada Disimpan. Daripada Disimpan, checkOut() oleh penempah menukarnya kepada Dipinjam, dan jika tempoh simpan tamat ia menjadi Tersedia. markLost() menukar naskhah Lewat kepada Hilang.'}},
+ {n:{en:'Activity diagram',bm:'Rajah aktiviti'}, q:{en:'Answers: what are the steps and decisions when an item is returned?',bm:'Menjawab: apakah langkah dan keputusan apabila item dipulangkan?'}, svg:actSVG,
+  alt:{en:'Start. Scan returned copy. Decision: overdue? If yes, calculate the fine by member type, then merge. Update copy status. Decision: reserved? If yes, place on hold shelf and notify the reserver, then end. If no, return the copy to the shelf, then end.',
+       bm:'Mula. Imbas naskhah dipulangkan. Keputusan: lewat? Jika ya, kira denda mengikut jenis ahli, kemudian bergabung. Kemas kini status naskhah. Keputusan: ditempah? Jika ya, letak di rak simpanan dan maklumkan penempah, kemudian tamat. Jika tidak, kembalikan naskhah ke rak, kemudian tamat.'}}
+];
+
+/* ---------- learn ---------- */
+var LEARN = [
+ {n:{en:'Classes and instances',bm:'Kelas dan tika'}},
+ {n:{en:'State and messages',bm:'Keadaan dan mesej'}},
+ {n:{en:'Inheritance and polymorphism',bm:'Pewarisan dan polimorfisme'}},
+ {n:{en:'Five UML diagrams',bm:'Lima rajah UML'}},
+ {n:{en:'Sequence diagram simulation',bm:'Simulasi rajah jujukan'}}
+];
+var SIMTXT = {
+ ok:{en:'Accepted',bm:'Diterima'}, no:{en:'Rejected',bm:'Ditolak'},
+ r:{
+  needLoan:{en:'Only a copy that is on loan or overdue can be checked in.',bm:'Hanya naskhah yang dipinjam atau lewat boleh dipulangkan.'},
+  notAvail:{en:'This copy is not on the shelf, so it cannot be checked out.',bm:'Naskhah ini tiada di rak, jadi tidak boleh dipinjam.'},
+  resAvail:{en:'Available copies can be borrowed straight away; reservations are for copies on loan.',bm:'Naskhah tersedia boleh terus dipinjam; tempahan hanya untuk naskhah yang sedang dipinjam.'},
+  resTwice:{en:'This copy already has a reservation.',bm:'Naskhah ini sudah ditempah.'},
+  renRes:{en:'Someone has reserved this copy, so it cannot be renewed.',bm:'Seseorang telah menempah naskhah ini, jadi ia tidak boleh diperbaharui.'},
+  renMax:{en:'The 2-renewal limit has been reached.',bm:'Had 2 kali pembaharuan telah dicapai.'},
+  renOver:{en:'Overdue loans cannot be renewed.',bm:'Pinjaman lewat tidak boleh diperbaharui.'},
+  dueNot:{en:'Only a copy on loan can become overdue.',bm:'Hanya naskhah yang dipinjam boleh menjadi lewat.'},
+  holdNot:{en:'Only a copy on hold can have its hold expire.',bm:'Hanya naskhah yang disimpan boleh tamat tempoh simpan.'},
+  lostNot:{en:'A copy is declared lost only after it becomes overdue.',bm:'Naskhah diisytiharkan hilang hanya selepas ia lewat.'},
+  lost:{en:'A lost copy accepts no messages until the record is reset.',bm:'Naskhah hilang tidak menerima mesej sehingga rekod ditetapkan semula.'}
+ },
+ a:{
+  out:{en:'Loan created. Status is now On loan.',bm:'Pinjaman dicipta. Status kini Dipinjam.'},
+  outHold:{en:'The reserver collected the copy. Status is now On loan.',bm:'Penempah mengambil naskhah. Status kini Dipinjam.'},
+  inAvail:{en:'Copy returned to the shelf. Status is now Available.',bm:'Naskhah dikembalikan ke rak. Status kini Tersedia.'},
+  inHold:{en:'Copy is reserved, so it goes to the hold shelf. Status is now On hold.',bm:'Naskhah ditempah, jadi ia ke rak simpanan. Status kini Disimpan.'},
+  inFine:{en:' A fine is calculated by the member’s class.',bm:' Denda dikira mengikut kelas ahli.'},
+  ren:{en:'Loan renewed.',bm:'Pinjaman diperbaharui.'},
+  res:{en:'Reservation recorded on this copy.',bm:'Tempahan direkodkan pada naskhah ini.'},
+  due:{en:'Due date passed. Status is now Overdue.',bm:'Tarikh akhir berlalu. Status kini Lewat.'},
+  hold:{en:'Hold expired. Status is now Available.',bm:'Tempoh simpan tamat. Status kini Tersedia.'},
+  lost:{en:'Copy declared lost. Status is now Lost.',bm:'Naskhah diisytiharkan hilang. Status kini Hilang.'}
+ }
+};
+/* ---------- members shared across Learn ---------- */
+var RATE={student:0.20, staff:0.50}, LIMIT={student:5, staff:10}, CLS={student:'Student', staff:'Staff'}, OVERDUE_DAYS=7;
+var editInst=null, instErr='';
+function baseName(m){ return (String(m.name).replace(/^(dr|prof|mr|mrs|ms|cik|encik|puan|tuan)\.?\s+/i,'').split(/\s+/)[0]||'').toLowerCase().replace(/[^a-z0-9]/g,'')||'member'; }
+function objName(m){ var b=baseName(m), n=0, k=0; S.instances.forEach(function(x){ if(baseName(x)===b){ n++; if(x.uid===m.uid) k=n; } }); return n>1 ? b+k : b; }
+function instBy(u){ if(!u) return null; return S.instances.filter(function(x){ return x.uid===u; })[0]||null; }
+function who(u){ var m=instBy(u); return m ? objName(m)+' : '+CLS[m.type] : 'null'; }
+function actingId(){ if(!instBy(S.actor)) S.actor = S.instances[0] ? S.instances[0].uid : null; return S.actor; }
+function ensureUids(){ S.instances.forEach(function(m){ if(!m.uid) m.uid=uid(); if(m.type!=='staff') m.type='student'; }); }
+function roleStatus(m){ var r=[]; if(S.sim.borrower===m.uid) r.push(L({en:'Has copy123 on loan',bm:'Sedang meminjam copy123'})); if(S.sim.reserver===m.uid) r.push(L({en:'Reserved copy123',bm:'Menempah copy123'})); if(S.actor===m.uid) r.push(L({en:'Acting member in step 2',bm:'Ahli bertindak dalam langkah 2'})); return r; }
+function answerWithObjects(){
+  var M=modelAnswer(), x=10, y=470, maxW=900;
+  S.instances.forEach(function(m){
+    var c={id:'o_'+m.uid, obj:true, name:objName(m)+' : '+CLS[m.type], attrs:['memberId = "'+m.id+'"','name = "'+m.name+'"','maxLoans = '+LIMIT[m.type]], methods:[], x:x, y:y};
+    var d=boxDims(c); if(x+d.w>maxW && x>10){ x=10; y+=110; c.x=x; c.y=y; }
+    M.classes.push(c); M.rels.push({from:c.id, to:m.type==='staff'?'staff':'student', kind:'instance'}); x+=d.w+24; });
+  return M;
+}
+function fill(str){ var A=S.instances[0], B=S.instances[1]; return String(str).replace(/\{A\}/g, A?A.name:'A').replace(/\{B\}/g, B?B.name:'B'); }
+SIMTXT.r.noMember={en:'No member is selected. Create a member in step 1 first.',bm:'Tiada ahli dipilih. Cipta ahli dalam langkah 1 dahulu.'};
+SIMTXT.r.holdFor={en:'This copy is on hold for {who}; only they can collect it.',bm:'Naskhah ini disimpan untuk {who}; hanya mereka boleh mengambilnya.'};
+SIMTXT.r.notBorrower={en:'Only the borrower, {who}, can renew this loan.',bm:'Hanya peminjam, {who}, boleh memperbaharui pinjaman ini.'};
+SIMTXT.r.ownRes={en:'The borrower cannot reserve a copy they already have.',bm:'Peminjam tidak boleh menempah naskhah yang sudah ada padanya.'};
+SIMTXT.r.limit={en:'{who} has reached the loan limit of {n} items.',bm:'{who} telah mencapai had pinjaman {n} item.'};
+SIMTXT.a.out={en:'{who} borrows the copy. Status is now On loan.',bm:'{who} meminjam naskhah. Status kini Dipinjam.'};
+SIMTXT.a.outHold={en:'{who} collects the reserved copy. Status is now On loan.',bm:'{who} mengambil naskhah yang ditempah. Status kini Dipinjam.'};
+SIMTXT.a.res={en:'{who} reserves this copy.',bm:'{who} menempah naskhah ini.'};
+SIMTXT.a.ren={en:'{who} renews the loan.',bm:'{who} memperbaharui pinjaman.'};
+SIMTXT.a.inFine={en:' {who} returned it {d} days late: calculateFine({d}) = RM{f} at RM{r} a day ({cls}).',bm:' {who} memulangkannya {d} hari lewat: calculateFine({d}) = RM{f} pada kadar RM{r} sehari ({cls}).'};
+SIMTXT.a.lost={en:'Copy declared lost. The replacement cost is charged to {who}.',bm:'Naskhah diisytiharkan hilang. Kos gantian dikenakan kepada {who}.'};
+function fmt(str, o){ return String(str).replace(/\{(\w+)\}/g, function(_,k){ return o[k]!==undefined ? o[k] : ''; }); }
+function simSend(msg, actorU){
+  var m=S.sim, st=m.state, ok=true, why='', res='', actor=actorU||actingId(), o={who:who(actor)}, extra='';
+  if(st==='lost'){ ok=false; why='lost'; }
+  else if(msg==='checkOut()'){
+    if(!instBy(actor)){ ok=false; why='noMember'; }
+    else if(st==='available'){ m.state='onloan'; m.renewals=0; m.borrower=actor; res='out'; }
+    else if(st==='onhold'){ if(actor!==m.reserver){ ok=false; why='holdFor'; o.who=who(m.reserver); } else { m.state='onloan'; m.renewals=0; m.borrower=actor; m.reserver=null; m.reserved=false; res='outHold'; } }
+    else { ok=false; why='notAvail'; } }
+  else if(msg==='checkIn()'){
+    if(st==='onloan'||st==='overdue'){ var b=instBy(m.borrower); o.who=who(m.borrower);
+      if(m.reserved){ m.state='onhold'; res='inHold'; } else { m.state='available'; res='inAvail'; }
+      if(st==='overdue' && b){ var r=RATE[b.type]; extra=fmt(L(SIMTXT.a.inFine),{who:o.who,d:OVERDUE_DAYS,f:(OVERDUE_DAYS*r).toFixed(2),r:r.toFixed(2),cls:CLS[b.type]}); }
+      m.borrower=null; }
+    else { ok=false; why='needLoan'; } }
+  else if(msg==='renew()'){
+    if(st!=='onloan'){ ok=false; why= st==='overdue'?'renOver':'needLoan'; }
+    else if(actor!==m.borrower){ ok=false; why='notBorrower'; o.who=who(m.borrower); }
+    else if(m.reserved){ ok=false; why='renRes'; }
+    else if(m.renewals>=2){ ok=false; why='renMax'; }
+    else { m.renewals++; res='ren'; } }
+  else if(msg==='reserve()'){
+    if(!instBy(actor)){ ok=false; why='noMember'; }
+    else if(st==='available'){ ok=false; why='resAvail'; }
+    else if(st!=='onloan'&&st!=='overdue'){ ok=false; why='notAvail'; }
+    else if(m.reserved){ ok=false; why='resTwice'; }
+    else if(actor===m.borrower){ ok=false; why='ownRes'; }
+    else { m.reserved=true; m.reserver=actor; res='res'; } }
+  else if(msg==='dueDatePasses'){ if(st==='onloan'){ m.state='overdue'; res='due'; } else { ok=false; why='dueNot'; } }
+  else if(msg==='holdExpires'){ if(st==='onhold'){ m.state='available'; m.reserved=false; m.reserver=null; res='hold'; } else { ok=false; why='holdNot'; } }
+  else if(msg==='markLost()'){ if(st==='overdue'){ o.who=who(m.borrower); m.state='lost'; res='lost'; } else { ok=false; why='lostNot'; } }
+  var detail = ok ? fmt(L(SIMTXT.a[res]),o)+extra : fmt(L(SIMTXT.r[why]),o);
+  m.log.unshift({msg:msg, ok:ok, detail:detail, by: (msg==='dueDatePasses'||msg==='holdExpires') ? '' : (msg==='checkIn()'||msg==='markLost()' ? ':Librarian' : who(actor))});
+  if(m.log.length>12) m.log.pop();
+  announce((ok?L(SIMTXT.ok):L(SIMTXT.no))+': '+msg+'. '+detail);
+  if(ok) done('learn-1');
+}
+
+function learnHTML(){
+  var i=S.learn, h='';
+  h+='<h2 tabindex="-1" id="pageH">'+esc(L({en:'Learn with e-Pinjam',bm:'Belajar dengan e-Pinjam'}))+'</h2>';
+  h+='<p class="lede">'+esc(L({en:'Five short steps. Each one uses the library case to show a Chapter 6 idea in action.',bm:'Lima langkah ringkas. Setiap satu menggunakan kes perpustakaan untuk menunjukkan idea Bab 6 secara langsung.'}))+'</p>';
+  h+='<div class="row" style="margin:-8px 0 14px"><button type="button" class="btn ghost sm" data-act="resetall">'+esc(L({en:'Reset all examples',bm:'Tetapkan semula semua contoh'}))+'</button></div>';
+  h+=stepper(LEARN,i,'learn');
+  h+='<section aria-labelledby="stepH">';
+  if(i===0){
+    var ed=editInst? instBy(editInst) : null;
+    h+='<h3 id="stepH">1. '+esc(L(LEARN[0].n))+'</h3><div id="rd0">';
+    h+='<p>'+esc(L({en:'Member is a class: the template every library member follows. Student and Staff are its subclasses. Each real member, such as Aisyah or Dr. Ravi, is an instance of one subclass with their own attribute values. In UML an instance is written as name : Class and underlined.',bm:'Member ialah kelas: templat yang diikuti oleh setiap ahli perpustakaan. Student dan Staff ialah subkelasnya. Setiap ahli sebenar, seperti Aisyah atau Dr. Ravi, ialah tika bagi satu subkelas dengan nilai atribut tersendiri. Dalam UML, tika ditulis sebagai nama : Kelas dan digaris bawah.'}))+'</p></div>'+listenBtns('rd0');
+    h+='<p class="note">'+esc(L({en:'The members you create, update or delete here are used in every other step: they borrow and reserve the copy in step 2, receive their own fines in step 3, and appear as objects in the step 4 diagrams.',bm:'Ahli yang anda cipta, kemas kini atau padam di sini digunakan dalam setiap langkah lain: mereka meminjam dan menempah naskhah dalam langkah 2, menerima denda sendiri dalam langkah 3, dan muncul sebagai objek dalam rajah langkah 4.'}))+'</p>';
+    h+='<div class="grid2"><div class="uml" aria-label="'+esc(L({en:'Class Member',bm:'Kelas Member'}))+'"><div class="hd">Member</div><div class="cp">memberId<br>name<br>maxLoans</div><div class="cp">borrow()<br>reserve()<br>calculateFine(days)</div><div class="cp hint">'+esc(L({en:'Subclasses: Student (5 items, RM0.20 a day), Staff (10 items, RM0.50 a day)',bm:'Subkelas: Student (5 item, RM0.20 sehari), Staff (10 item, RM0.50 sehari)'}))+'</div></div>';
+    h+='<form class="panel form" data-form="inst" novalidate><h4 style="margin-top:0">'+esc(ed? L({en:'Update ',bm:'Kemas kini '})+ed.name : L({en:'Create an instance',bm:'Cipta tika'}))+'</h4>';
+    if(instErr) h+='<p class="fb no" role="alert" id="instErr"><b class="no">✗</b> '+esc(instErr)+'</p>';
+    h+='<label class="f">'+esc(L({en:'Name',bm:'Nama'}))+'<input type="text" name="name" required autocomplete="off" value="'+esc(ed?ed.name:'')+'"'+(instErr?' aria-describedby="instErr"':'')+'></label>';
+    h+='<label class="f">'+esc(L({en:'Member ID',bm:'ID ahli'}))+' <span class="hint">'+esc(L({en:'must be unique',bm:'mesti unik'}))+'</span><input type="text" name="id" required autocomplete="off" value="'+esc(ed?ed.id:'')+'"'+(instErr?' aria-describedby="instErr"':'')+'></label>';
+    h+='<label class="f">'+esc(L({en:'Class',bm:'Kelas'}))+'<select name="type"><option value="student"'+(ed&&ed.type==='student'?' selected':'')+'>Student ('+esc(L({en:'student',bm:'pelajar'}))+')</option><option value="staff"'+(ed&&ed.type==='staff'?' selected':'')+'>Staff ('+esc(L({en:'staff',bm:'staf'}))+')</option></select></label>';
+    h+='<div class="row"><button class="btn" type="submit">'+esc(ed? L({en:'Save changes',bm:'Simpan perubahan'}) : L({en:'Create instance',bm:'Cipta tika'}))+'</button>'+(ed?'<button class="btn ghost" type="button" data-act="cancelinst">'+esc(L({en:'Cancel',bm:'Batal'}))+'</button>':'')+'</div></form></div>';
+    h+='<h4>'+esc(L({en:'Instances',bm:'Tika'}))+' ('+S.instances.length+')</h4>';
+    if(!S.instances.length) h+='<p class="muted">'+esc(L({en:'No members yet. Create one above; steps 2 to 4 need at least one, and the guided scenario needs two.',bm:'Belum ada ahli. Cipta satu di atas; langkah 2 hingga 4 memerlukan sekurang-kurangnya satu, dan senario berpandu memerlukan dua.'}))+'</p>';
+    h+='<div class="inst-list" role="list">';
+    S.instances.forEach(function(m){ var rs=roleStatus(m);
+      h+='<div class="uml" role="listitem"'+(m.uid===editInst?' style="border-color:var(--accent);border-width:3px"':'')+'><div class="hd"><u>'+esc(objName(m))+' : '+CLS[m.type]+'</u></div><div class="cp">memberId = "'+esc(m.id)+'"<br>name = "'+esc(m.name)+'"<br>maxLoans = '+LIMIT[m.type]+'</div>'+
+        (rs.length?'<div class="cp hint">'+rs.map(esc).join('<br>')+'</div>':'')+
+        '<div class="cp row" style="gap:8px"><button type="button" class="btn sec sm" data-act="editinst" data-u="'+esc(m.uid)+'" aria-label="'+esc(L({en:'Update ',bm:'Kemas kini '})+m.name)+'">'+esc(L({en:'Update',bm:'Kemas kini'}))+'</button><button type="button" class="btn ghost sm" data-act="delinst" data-u="'+esc(m.uid)+'" aria-label="'+esc(L({en:'Delete ',bm:'Padam '})+m.name)+'">'+esc(L({en:'Delete',bm:'Padam'}))+'</button></div></div>'; });
+    h+='</div><p class="note" style="margin-top:16px">'+esc(L({en:'Notice: every instance has the same attributes, but different values. maxLoans comes from the subclass: 5 for Student, 10 for Staff. Change a member’s class and watch their fine change in steps 2 and 3.',bm:'Perhatikan: setiap tika mempunyai atribut yang sama, tetapi nilai berbeza. maxLoans datang daripada subkelas: 5 untuk Student, 10 untuk Staff. Tukar kelas ahli dan lihat denda mereka berubah dalam langkah 2 dan 3.'}))+'</p>'+resetBtn(0);
+  }
+  if(i===1){
+    var m=S.sim;
+    h+='<h3 id="stepH">2. '+esc(L(LEARN[1].n))+'</h3><div id="rd1">';
+    h+='<p>'+esc(L({en:'A BookCopy object hides its data. Other objects cannot change its status directly; they can only send it messages. Whether a message is accepted depends on the copy’s current state. That is encapsulation and state working together.',bm:'Objek BookCopy menyembunyikan datanya. Objek lain tidak boleh menukar statusnya secara langsung; mereka hanya boleh menghantar mesej. Sama ada mesej diterima bergantung pada keadaan semasa naskhah. Itulah pengkapsulan dan keadaan bekerja bersama.'}))+'</p>';
+    h+='<p>'+esc(L({en:'Send messages below and watch the highlighted state in the diagram. Try to reach every state, and try messages that should be rejected.',bm:'Hantar mesej di bawah dan lihat keadaan yang diserlahkan dalam rajah. Cuba capai setiap keadaan, dan cuba mesej yang sepatutnya ditolak.'}))+'</p></div>'+listenBtns('rd1');
+    h+='<div class="sim"><div>'+playPanel()+'<div class="uml"><div class="hd"><u>copy123 : BookCopy</u></div><div class="cp">barcode = "PTSL-000123"<br>status = <b>'+esc(L(ST[m.state].l))+'</b><br>renewals = '+m.renewals+'<br>borrower = '+esc(who(m.borrower))+'<br>reservedBy = '+esc(who(m.reserver))+'</div></div>';
+    var aid=actingId();
+    if(!S.instances.length) h+='<p class="fb no" style="margin-top:14px">'+esc(L({en:'There are no members to act. Create one in step 1.',bm:'Tiada ahli untuk bertindak. Cipta satu dalam langkah 1.'}))+' <button type="button" class="btn sec sm" data-act="learnGo" data-i="0">'+esc(L({en:'Go to step 1',bm:'Pergi ke langkah 1'}))+'</button></p>';
+    else { h+='<label class="f" for="actorSel" style="margin-top:14px">'+esc(L({en:'Acting member (from step 1)',bm:'Ahli bertindak (dari langkah 1)'}))+'<select id="actorSel">';
+      S.instances.forEach(function(x){ h+='<option value="'+esc(x.uid)+'"'+(x.uid===aid?' selected':'')+'>'+esc(objName(x)+' : '+CLS[x.type]+' ('+x.name+')')+'</option>'; });
+      h+='</select><span class="hint">'+esc(L({en:'checkOut(), renew() and reserve() are sent on behalf of this member.',bm:'checkOut(), renew() dan reserve() dihantar bagi pihak ahli ini.'}))+'</span></label>'; }
+    h+='<h4>'+esc(L({en:'Send a message',bm:'Hantar mesej'}))+'</h4><div class="msgs">';
+    ['checkOut()','checkIn()','renew()','reserve()','dueDatePasses','holdExpires','markLost()'].forEach(function(x){ h+='<button type="button" class="btn sec sm" data-act="sim" data-m="'+x+'">'+x+'</button>'; });
+    h+='</div>'+resetBtn(1);
+    h+='<h4>'+esc(L({en:'Message log',bm:'Log mesej'}))+'</h4><ul class="log">';
+    if(!m.log.length) h+='<li class="muted">'+esc(L({en:'No messages yet. Start with checkOut().',bm:'Belum ada mesej. Mulakan dengan checkOut().'}))+'</li>';
+    m.log.forEach(function(e){ h+='<li><span class="tag '+(e.ok?'ok':'no')+'">'+(e.ok?'✓ ':'✗ ')+esc(e.ok?L(SIMTXT.ok):L(SIMTXT.no))+'</span><span>'+(e.by?'<span class="hint">'+esc(e.by)+' → </span>':'')+'<code>'+esc(e.msg)+'</code> '+esc(e.detail)+'</span></li>'; });
+    h+='</ul></div><div class="dgwrap fit">'+stSVG(m.state)+'</div></div>';
+  }
+  if(i===2){
+    var d=S.days;
+    h+='<h3 id="stepH">3. '+esc(L(LEARN[2].n))+'</h3><div id="rd2">';
+    h+='<p>'+esc(L({en:'Student and Staff are subclasses of Member. They inherit memberId, name, borrow() and reserve() without redefining them, and add their own attributes such as matricNo or staffNo.',bm:'Student dan Staff ialah subkelas bagi Member. Mereka mewarisi memberId, name, borrow() dan reserve() tanpa mentakrif semula, dan menambah atribut sendiri seperti matricNo atau staffNo.'}))+'</p>';
+    h+='<p>'+esc(L({en:'Both answer the same message, calculateFine(days), in their own way. The sender does not need to know which kind of member it is talking to. That is polymorphism.',bm:'Kedua-duanya menjawab mesej yang sama, calculateFine(days), dengan cara tersendiri. Penghantar tidak perlu tahu jenis ahli yang sedang dihubunginya. Itulah polimorfisme.'}))+'</p></div>'+listenBtns('rd2');
+    h+='<div class="dgwrap">'+classSVG({classes:[{id:'m',name:'Member',attrs:['memberId','name'],methods:['borrow()','reserve()','calculateFine(days)'],x:230,y:10},{id:'s',name:'Student',attrs:['matricNo','faculty'],methods:['calculateFine(days)'],x:60,y:220},{id:'t',name:'Staff',attrs:['staffNo','department'],methods:['calculateFine(days)'],x:420,y:220}],rels:[{from:'s',to:'m',kind:'inherit'},{from:'t',to:'m',kind:'inherit'}]},false,L({en:'Student and Staff inherit from Member',bm:'Student dan Staff mewarisi Member'}))+'</div>';
+    h+='<div class="panel" style="margin-top:18px"><label class="f" for="days">'+esc(L({en:'Days overdue',bm:'Hari lewat'}))+': <span id="daysOut">'+d+'</span></label><input type="range" id="days" min="0" max="60" value="'+d+'" aria-describedby="daysHelp"><p id="daysHelp" class="hint">'+esc(L({en:'Move the slider to send the same message, calculateFine(days), to every member you created in step 1.',bm:'Gerakkan peluncur untuk menghantar mesej yang sama, calculateFine(days), kepada setiap ahli yang anda cipta dalam langkah 1.'}))+'</p>';
+    h+='<div class="fines" aria-live="polite" id="fineOut">'+fineCards(d)+'</div>'+resetBtn(2)+'</div>';
+  }
+  if(i===3){
+    var g=GALLERY[S.gallery]||GALLERY[0];
+    h+='<h3 id="stepH">4. '+esc(L(LEARN[3].n))+'</h3>';
+    h+='<p>'+esc(L({en:'The same library, seen five ways. Choose a diagram; each answers a different question about e-Pinjam.',bm:'Perpustakaan yang sama, dilihat dalam lima cara. Pilih rajah; setiap satu menjawab soalan berbeza tentang e-Pinjam.'}))+'</p>';
+    h+='<div class="gtabs" role="group" aria-label="'+esc(L({en:'Diagrams',bm:'Rajah'}))+'">';
+    GALLERY.forEach(function(x,k){ h+='<button type="button" data-act="gal" data-i="'+k+'" aria-pressed="'+(k===S.gallery)+'">'+esc(L(x.n))+'</button>'; });
+    h+='</div><p class="answers">'+esc(L(g.q))+'</p>'+galleryNote()+'<div class="dgwrap fit">'+g.svg()+'</div>';
+    h+='<details class="alt"><summary>'+esc(t('textAlt'))+'</summary><p id="altTxt">'+esc(L(g.alt))+galleryAltExtra()+'</p></details><p id="galSpeak" class="sr" aria-hidden="true">'+esc(L(g.n)+'. '+L(g.q)+' '+L(g.alt)+galleryAltExtra())+'</p>'+listenBtns('galSpeak')+resetBtn(3);
+  }
+  if(i===4){ h+=seqSimHTML(); }
+  h+='</section>';
+  h+='<div class="pager">'+(i>0?'<button type="button" class="btn ghost" data-act="learnGo" data-i="'+(i-1)+'">'+esc(t('prev'))+'</button>':'<span></span>')+
+     (i<LEARN.length-1?'<button type="button" class="btn" data-act="learnGo" data-i="'+(i+1)+'">'+esc(t('next'))+': '+esc(L(LEARN[i+1].n))+'</button>':'<button type="button" class="btn" data-act="tab" data-tab="simulate">'+esc(L({en:'Go to Simulations',bm:'Pergi ke Simulasi'}))+'</button>')+'</div>';
+  return h;
+}
+/* ---------- sequence diagram simulation ---------- */
+var SEQ={ sc:0, i:0, running:false, timer:null, speed:2200 };
+function stopSeq(){ SEQ.running=false; if(SEQ.timer){ clearTimeout(SEQ.timer); SEQ.timer=null; } }
+function seqData(){
+  var m=instBy(S.sim.borrower)||instBy(actingId()), on=m?objName(m):'member', cls=m?CLS[m.type]:'Student', ty=m?m.type:'student', rate=RATE[ty];
+  var o={M:m?m.name:L({en:'the member',bm:'ahli'}), cls:cls, lim:LIMIT[ty], days:ty==='staff'?30:14, rate:rate.toFixed(2), fine:(7*rate).toFixed(2)};
+  var P=[':Librarian', on+' : '+cls, 'copy123 : BookCopy', 'loan1 : Loan'];
+  var B={ n:{en:'Borrow item',bm:'Pinjam item'}, create:3, destroy:-1,
+    bars:[[0,0,5],[1,0,1],[1,4,4],[2,2,5],[3,3,4]],
+    msgs:[
+     [0,1,'checkStatus()','call',{en:'The librarian scans {M}’s card and sends checkStatus() to the {cls} object. A solid arrow is a call.',bm:'Pustakawan mengimbas kad {M} dan menghantar checkStatus() kepada objek {cls}. Anak panah padu ialah panggilan.'}],
+     [1,0,'status OK','ret',{en:'{M} has no fines over RM10 and is under the {cls} limit of {lim} items, so the reply is OK. A dashed arrow is a reply.',bm:'{M} tiada denda melebihi RM10 dan masih di bawah had {cls} iaitu {lim} item, jadi balasannya OK. Anak panah putus-putus ialah balasan.'}],
+     [0,2,'checkOut('+on+')','call',{en:'The librarian scans the copy and sends checkOut() to BookCopy, passing the member as a parameter.',bm:'Pustakawan mengimbas naskhah dan menghantar checkOut() kepada BookCopy, dengan ahli sebagai parameter.'}],
+     [2,3,'«create» Loan(dueDate)','create',{en:'BookCopy creates a new Loan. The Loan box appears here, part-way down, because it did not exist before this message.',bm:'BookCopy mencipta Loan baharu. Kotak Loan muncul di sini, di tengah-tengah, kerana ia tidak wujud sebelum mesej ini.'}],
+     [3,1,'addLoan(loan1)','call',{en:'The new Loan registers itself with {M}. A {cls} borrows for {days} days, which sets the due date.',bm:'Loan baharu mendaftarkan dirinya dengan {M}. {cls} meminjam selama {days} hari, yang menetapkan tarikh akhir.'}],
+     [2,0,'due date slip','ret',{en:'Control returns to the librarian with the due date slip. The copy is now On loan.',bm:'Kawalan kembali kepada pustakawan bersama slip tarikh akhir. Naskhah kini Dipinjam.'}]
+    ],
+    state:function(i){ return [['copy123.status', L(i>=4?ST.onloan.l:ST.available.l)], [on+'.loans', i>=5?'1':'0'], ['loan1', i>=4? L({en:'due in ',bm:'tamat dalam '})+o.days+L({en:' days',bm:' hari'}) : L({en:'not created',bm:'belum dicipta'})]]; } };
+  var R={ n:{en:'Return a late item',bm:'Pulang item lewat'}, create:-1, destroy:4,
+    bars:[[0,0,5],[2,0,5],[3,1,4],[1,2,3]],
+    msgs:[
+     [0,2,'checkIn()','call',{en:'Seven days late, {M} returns the copy. The librarian sends checkIn() to BookCopy.',bm:'Lewat tujuh hari, {M} memulangkan naskhah. Pustakawan menghantar checkIn() kepada BookCopy.'}],
+     [2,3,'close()','call',{en:'BookCopy tells its Loan to close().',bm:'BookCopy mengarahkan Loan untuk close().'}],
+     [3,1,'calculateFine(7)','call',{en:'Loan sends calculateFine(7) to {M}. Polymorphism: because {M} is a {cls}, the {cls} version runs at RM{rate} a day.',bm:'Loan menghantar calculateFine(7) kepada {M}. Polimorfisme: kerana {M} ialah {cls}, versi {cls} dijalankan pada kadar RM{rate} sehari.'}],
+     [1,3,'RM'+o.fine,'ret',{en:'The member object replies with the fine: RM{fine}.',bm:'Objek ahli membalas dengan denda: RM{fine}.'}],
+     [3,2,'fine = RM'+o.fine,'ret',{en:'Loan reports the fine to BookCopy, and its lifeline ends with an X: this loan is finished.',bm:'Loan melaporkan denda kepada BookCopy, dan garis hayatnya tamat dengan X: pinjaman ini selesai.'}],
+     [2,0,'status = Available','ret',{en:'BookCopy confirms to the librarian that the copy is Available again.',bm:'BookCopy mengesahkan kepada pustakawan bahawa naskhah kembali Tersedia.'}]
+    ],
+    state:function(i){ return [['copy123.status', i>=6? L(ST.available.l) : L(ST.overdue.l)], ['loan1', i>=5? L({en:'destroyed',bm:'dimusnahkan'}) : L({en:'open',bm:'aktif'})], [on+'.fine', i>=4? 'RM'+o.fine : '—']]; } };
+  return { P:P, o:o, sc:[B,R][SEQ.sc] };
+}
+function seqY(k){ return 118+k*58; }
+function seqSimSVG(D, i){
+  var sc=D.sc, xs=[100,300,500,700], H=118+6*58+30, s='', end=H-12;
+  s+='<defs><marker id="sqf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ink"/></marker><marker id="sqo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="none" style="stroke:var(--ink)" stroke-width="1.6"/></marker>'+
+     '<marker id="sqfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--accent)"/></marker><marker id="sqoa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="none" style="stroke:var(--accent)" stroke-width="2"/></marker></defs>';
+  D.P.forEach(function(p,k){
+    var top=20, visible=true;
+    if(k===sc.create){ top=seqY(sc.create)-22; visible = i>sc.create; }
+    if(!visible) return;
+    var lend = (k===sc.destroy && i>sc.destroy) ? seqY(sc.destroy)+22 : end;
+    s+='<rect x="'+(xs[k]-90)+'" y="'+top+'" width="180" height="44" rx="6" class="soft"/>'+txt(xs[k],top+27,p,'t-b','middle');
+    s+='<line x1="'+xs[k]+'" y1="'+(top+44)+'" x2="'+xs[k]+'" y2="'+lend+'" class="dash"/>';
+    if(k===sc.destroy && i>sc.destroy){ var xx=xs[k], yy=lend; s+='<path d="M'+(xx-10)+' '+(yy-10)+'L'+(xx+10)+' '+(yy+10)+'M'+(xx+10)+' '+(yy-10)+'L'+(xx-10)+' '+(yy+10)+'" class="ln" style="stroke-width:3"/>'; }
+  });
+  sc.bars.forEach(function(b){ if(i>b[1]){ var y1=seqY(b[1])-8, y2=seqY(Math.min(b[2],i-1))+8; s+='<rect x="'+(xs[b[0]]-6)+'" y="'+y1+'" width="12" height="'+(y2-y1)+'" class="node"/>'; } });
+  sc.msgs.forEach(function(m,k){ if(k>=i) return; var cur=(k===i-1), y=seqY(k), dir=m[0]<m[1]?1:-1;
+    var x1=xs[m[0]]+6*dir, x2 = (m[3]==='create') ? xs[m[1]]-90 : xs[m[1]]-6*dir;
+    var dashed=(m[3]!=='call'), mk=(m[3]==='call'?'sqf':'sqo')+(cur?'a':'');
+    s+='<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" class="'+(dashed?'dash':'ln')+(cur?' cur':'')+'" style="'+(cur?'':'stroke:var(--ink)')+'" marker-end="url(#'+mk+')"/>';
+    s+='<text x="'+((x1+x2)/2)+'" y="'+(y-9)+'" text-anchor="middle"'+(cur?' class="curt"':'')+'>'+esc((k+1)+'  '+m[2])+'</text>'; });
+  if(i===0) s+=txt(400,seqY(0)+4,L({en:'Press Next step or Auto play to send the first message.',bm:'Tekan Langkah seterusnya atau Main automatik untuk menghantar mesej pertama.'}),'t-s','middle');
+  return '<svg class="dg" viewBox="0 0 800 '+H+'" width="800" height="'+H+'" role="img" aria-label="'+esc(L({en:'Sequence diagram simulation: ',bm:'Simulasi rajah jujukan: '})+L(sc.n)+'. '+L({en:'Messages shown: ',bm:'Mesej dipaparkan: '})+i+' / '+sc.msgs.length)+'">'+s+'</svg>';
+}
+function seqSimHTML(hub){
+  var D=seqData(), sc=D.sc, n=sc.msgs.length, i=SEQ.i, fin=i>=n, h='';
+  h+=(hub?'':'<h3 id="stepH">5. '+esc(L(LEARN[4].n))+'</h3>')+'<div id="rd4"><p>'+esc(L({en:'Watch the messages of a use case appear one at a time, in time order from top to bottom. The member lifeline is the acting member from step 2, so a Student and a Staff member produce different results.',bm:'Lihat mesej bagi satu kes guna muncul satu demi satu, mengikut masa dari atas ke bawah. Garis hayat ahli ialah ahli bertindak dari langkah 2, jadi Student dan Staff menghasilkan keputusan berbeza.'}))+'</p></div>';
+  h+='<div class="seqsim"><div>';
+  h+='<div class="gtabs" role="group" aria-label="'+esc(L({en:'Scenario',bm:'Senario'}))+'"><button type="button" data-act="seqsc" data-i="0" aria-pressed="'+(SEQ.sc===0)+'">'+esc(L({en:'Borrow item',bm:'Pinjam item'}))+'</button><button type="button" data-act="seqsc" data-i="1" aria-pressed="'+(SEQ.sc===1)+'">'+esc(L({en:'Return a late item',bm:'Pulang item lewat'}))+'</button></div>';
+  h+='<div class="panel"><div class="play-ctl">';
+  h+='<button type="button" class="btn" data-act="seqnext"'+(fin?' disabled':'')+'>'+esc(L({en:'Next step',bm:'Langkah seterusnya'}))+'</button>';
+  h+='<button type="button" class="btn sec" data-act="seqauto" aria-pressed="'+SEQ.running+'">'+(SEQ.running? '❚❚ '+esc(L({en:'Pause',bm:'Jeda'})) : '▶ '+esc(fin? L({en:'Auto play again',bm:'Main automatik semula'}) : L({en:'Auto play',bm:'Main automatik'})))+'</button>';
+  h+='<button type="button" class="btn ghost" data-act="seqreset">'+esc(L({en:'Reset',bm:'Tetapkan semula'}))+'</button></div>';
+  h+='<div class="play-ctl" style="margin-top:8px"><label class="f" for="seqSpeed">'+esc(L({en:'Speed',bm:'Kelajuan'}))+'<select id="seqSpeed">'+[[3200,{en:'Slow',bm:'Perlahan'}],[2200,{en:'Normal',bm:'Biasa'}],[1200,{en:'Fast',bm:'Laju'}]].map(function(x){ return '<option value="'+x[0]+'"'+(SEQ.speed===x[0]?' selected':'')+'>'+esc(L(x[1]))+'</option>'; }).join('')+'</select></label></div>';
+  h+='<div style="margin-top:10px"><label for="seqProg" class="hint">'+esc(L({en:'Message',bm:'Mesej'}))+' '+i+' / '+n+'</label><progress id="seqProg" max="'+n+'" value="'+i+'">'+i+' / '+n+'</progress></div>';
+  var cur = i>0 ? sc.msgs[i-1] : null;
+  h+='<p class="note narr" id="seqNarr">'+(cur? '<b>'+esc((i)+'. '+D.P[cur[0]]+' → '+D.P[cur[1]])+'.</b> <br><code>'+esc(cur[2])+'</code> '+esc(fmt(L(cur[4]),D.o)) : esc(L({en:'Nothing sent yet. Each step adds one message to the diagram.',bm:'Belum ada mesej dihantar. Setiap langkah menambah satu mesej pada rajah.'})))+'</p>'+listenBtns('seqNarr');
+  if(fin) h+='<p class="narr"><b>'+esc(L({en:'Scenario complete.',bm:'Senario selesai.'}))+'</b> '+esc(L({en:'Try the other scenario, or change the acting member in step 2 and run it again.',bm:'Cuba senario lain, atau tukar ahli bertindak dalam langkah 2 dan jalankan semula.'}))+'</p>';
+  h+='<h4>'+esc(L({en:'Object values now',bm:'Nilai objek sekarang'}))+'</h4><ul class="objstate">'+sc.state(i).map(function(r){ return '<li><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></li>'; }).join('')+'</ul>';
+  if(i>0){ h+='<h4>'+esc(L({en:'Messages so far',bm:'Mesej setakat ini'}))+'</h4><ol class="steplist">'; sc.msgs.slice(0,i).forEach(function(m,k){ h+='<li'+(k===i-1?' aria-current="step"':'')+'><code>'+esc(m[2])+'</code></li>'; }); h+='</ol>'; }
+  if(!S.instances.length) h+='<p class="hint">'+esc(L({en:'No members exist, so a placeholder member is used. Create members in step 1.',bm:'Tiada ahli, jadi ahli contoh digunakan. Cipta ahli dalam langkah 1.'}))+'</p>';
+  h+='</div></div><div class="dgwrap fit">'+seqSimSVG(D,i)+'</div></div>'+resetBtn(4);
+  return h;
+}
+function seqAnnounce(){ var D=seqData(), m=D.sc.msgs[SEQ.i-1]; if(m) announce(SEQ.i+' / '+D.sc.msgs.length+'. '+m[2]+'. '+fmt(L(m[4]),D.o)); }
+function seqTick(){ var n=seqData().sc.msgs.length; if(SEQ.i<n){ SEQ.i++; } if(SEQ.i>=n){ stopSeq(); done('learn-4'); } rerenderKeep(); seqAnnounce(); if(SEQ.running) SEQ.timer=setTimeout(seqTick, SEQ.speed); }
+function seqFocusFix(){ if(SEQ.i>=6){ var a=document.activeElement; if(!a||a===document.body){ var b=main.querySelector('[data-act="seqauto"]'); if(b) b.focus(); } } }
+/* ---------- v2.0: simulation studio ---------- */
+var GS={ sim:'usecase', sc:0, i:0, running:false, timer:null, speed:2200 };
+function stopGS(){ GS.running=false; if(GS.timer){ clearTimeout(GS.timer); GS.timer=null; } }
+function stopAllSims(){ stopGS(); stopSeq(); stopPlay(); }
+function getAB(){
+  var A=S.instances[0]||{uid:'_a',name:'Aisyah Rahman',id:'A201234',type:'student'}, B=S.instances[1]||{uid:'_b',name:'Dr. Ravi Kumar',id:'K007712',type:'staff'};
+  return {A:A,B:B};
+}
+function abVars(){ var p=getAB(), r=RATE[p.A.type];
+  return { A:p.A.name, B:p.B.name, oa:objName(p.A), ob:objName(p.B), cls:CLS[p.A.type], clsB:CLS[p.B.type], rate:r.toFixed(2), fine:(7*r).toFixed(2) }; }
+function kk(A,V,key){ return A[key]?'h':V[key]?'s':''; }
+function shp(c){ return c==='h'?' hot':c==='s'?' seen':''; }
+function lnc(c){ return c==='h'?' hotl':c==='s'?' seenl':''; }
+function mkDefs(id){
+  function m(suf,style){ return '<marker id="'+id+suf+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="'+style+'"/></marker>'; }
+  return '<defs>'+m('','fill:var(--ink)')+m('h','fill:var(--accent)')+m('s','fill:var(--ok)')+'</defs>';
+}
+function arrowPath(id,c,d){ return '<path d="'+d+'" class="ln'+lnc(c)+'" marker-end="url(#'+id+(c||'')+')"/>'; }
+function boxText(cx,cy,lines,c){ var s='', off=(lines.length-1)*8; lines.forEach(function(t0,j){ s+='<text x="'+cx+'" y="'+(cy+4-off+j*16)+'" text-anchor="middle"'+(c==='h'?' class="hott"':'')+'>'+esc(t0)+'</text>'; }); return s; }
+
+/* use case simulation */
+function stick2(x,y,label,c){ return '<circle cx="'+x+'" cy="'+y+'" r="11" class="soft'+shp(c)+'"/><path d="M'+x+' '+(y+11)+'v32M'+(x-20)+' '+(y+22)+'h40M'+x+' '+(y+43)+'l-16 26M'+x+' '+(y+43)+'l16 26" class="ln'+lnc(c)+'"/>'+txt(x,y+90,label,'t-b','middle'); }
+function ucSimSVG(sc,i,X){
+  var A=X.A, V=X.V, ys=[66,112,158,204,250,296,342,388], s='';
+  s+='<rect x="215" y="16" width="350" height="408" rx="12" class="bound'+lnc(kk(A,V,'bd'))+'"/>'+txt(232,40,'e-Pinjam','t-b');
+  [['m',0],['m',1],['m',3],['m',4],['m',5],['l',1],['l',2],['l',6],['l',7],['g',5]].forEach(function(e){
+    var f= e[0]==='m'?[117,178,250] : e[0]==='l'?[668,148,530] : [620,312,530];
+    s+='<line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+f[2]+'" y2="'+ys[e[1]]+'" class="ln'+lnc(kk(A,V,'e-'+e[0]+'-'+e[1]))+'"/>'; });
+  ys.forEach(function(y,k){ var c=kk(A,V,'uc'+k); s+='<ellipse cx="390" cy="'+y+'" rx="140" ry="19" class="soft'+shp(c)+'"/><text x="390" y="'+(y+4)+'" text-anchor="middle"'+(c==='h'?' class="hott"':'')+'>'+esc(L(UCN[k]))+'</text>'; });
+  s+=stick2(95,140,L({en:'Member',bm:'Ahli'}),kk(A,V,'am'));
+  s+=txt(95,250,L({en:'played by ',bm:'dimainkan oleh '})+abVars().oa,'t-s','middle');
+  s+=stick2(690,110,L({en:'Librarian',bm:'Pustakawan'}),kk(A,V,'al'));
+  var g=kk(A,V,'ag'); s+='<rect x="620" y="290" width="140" height="58" rx="6" class="node'+shp(g)+'"/><text x="690" y="312" text-anchor="middle" class="'+(g==='h'?'hott':'t-s')+'">«system»</text><text x="690" y="334" text-anchor="middle" class="t-b'+(g==='h'?' hott':'')+'">'+esc(L({en:'Payment gateway',bm:'Gerbang bayaran'}))+'</text>';
+  return '<svg class="dg" viewBox="0 0 780 440" width="780" height="440" role="img" aria-label="'+esc(L({en:'Use case diagram simulation',bm:'Simulasi rajah kes guna'}))+'">'+s+'</svg>';
+}
+function ucScen(){
+  function v(actor,uc,other){ return [[L({en:'Actor',bm:'Aktor'}),actor],[L({en:'Use case',bm:'Kes guna'}),uc],[L({en:'Other actors',bm:'Aktor lain'}),other||'—']]; }
+  var M=L({en:'Member',bm:'Ahli'}), Li=L({en:'Librarian',bm:'Pustakawan'}), G=L({en:'Payment gateway',bm:'Gerbang pembayaran'});
+  return [
+   {n:{en:'A member’s goals',bm:'Matlamat ahli'}, steps:[
+    {on:['am','e-m-0','uc0'], s:UCN[0], n:{en:'{A} plays the Member actor and starts Search catalogue to find a title. An actor is always outside the system boundary.',bm:'{A} memainkan aktor Ahli dan memulakan Cari katalog untuk mencari judul. Aktor sentiasa berada di luar sempadan sistem.'}, vals:v(M,L(UCN[0]))},
+    {on:['am','e-m-1','uc1','e-l-1','al'], s:UCN[1], n:{en:'Borrow item links two actors: {A} asks for the copy and the Librarian checks it out. One use case can involve several actors.',bm:'Pinjam item menghubungkan dua aktor: {A} meminta naskhah dan Pustakawan merekod pinjaman. Satu kes guna boleh melibatkan beberapa aktor.'}, vals:v(M,L(UCN[1]),Li)},
+    {on:['am','e-m-3','uc3'], s:UCN[3], n:{en:'Before the due date, {A} renews the loan online. One goal (a later due date) means one use case.',bm:'Sebelum tarikh akhir, {A} memperbaharui pinjaman dalam talian. Satu matlamat (tarikh akhir baharu) bermaksud satu kes guna.'}, vals:v(M,L(UCN[3]))},
+    {on:['am','e-m-4','uc4'], s:UCN[4], n:{en:'{A} reserves another title that is on loan.',bm:'{A} menempah judul lain yang sedang dipinjam.'}, vals:v(M,L(UCN[4]))},
+    {on:['am','e-m-5','uc5','e-g-5','ag'], s:UCN[5], n:{en:'{A} pays a fine online. The Payment gateway is an actor because it is an external system outside e-Pinjam.',bm:'{A} membayar denda dalam talian. Gerbang pembayaran ialah aktor kerana ia sistem luaran di luar e-Pinjam.'}, vals:v(M,L(UCN[5]),G)}
+   ]},
+   {n:{en:'The librarian’s work',bm:'Tugas pustakawan'}, steps:[
+    {on:['al','e-l-1','uc1'], s:UCN[1], n:{en:'At the counter, the Librarian completes Borrow item for {B}.',bm:'Di kaunter, Pustakawan melengkapkan Pinjam item untuk {B}.'}, vals:v(Li,L(UCN[1]),M)},
+    {on:['al','e-l-2','uc2'], s:UCN[2], n:{en:'The Librarian records every return. Members never use this use case themselves.',bm:'Pustakawan merekod setiap pemulangan. Ahli tidak menggunakan kes guna ini sendiri.'}, vals:v(Li,L(UCN[2]))},
+    {on:['al','e-l-6','uc6'], s:UCN[6], n:{en:'Adding titles and copies to the catalogue is a separate goal, so it is a separate use case.',bm:'Menambah judul dan naskhah ke katalog ialah matlamat berasingan, jadi ia kes guna berasingan.'}, vals:v(Li,L(UCN[6]))},
+    {on:['al','e-l-7','uc7'], s:UCN[7], n:{en:'An overdue report is a result the Librarian values, so it counts as a use case.',bm:'Laporan lewat ialah hasil yang bernilai kepada Pustakawan, jadi ia dikira sebagai kes guna.'}, vals:v(Li,L(UCN[7]))}
+   ]},
+   {n:{en:'Reading the diagram',bm:'Membaca rajah'}, steps:[
+    {on:['bd'], s:{en:'System boundary',bm:'Sempadan sistem'}, n:{en:'The rectangle is the system boundary. Everything inside is e-Pinjam; everything outside is not.',bm:'Segi empat ialah sempadan sistem. Semua di dalam ialah e-Pinjam; semua di luar bukan.'}, vals:[[L({en:'Symbol',bm:'Simbol'}),L({en:'Rectangle',bm:'Segi empat'})]]},
+    {on:['am','al','ag'], s:{en:'Actors',bm:'Aktor'}, n:{en:'Actors sit outside the boundary: two roles played by people and one external system.',bm:'Aktor berada di luar sempadan: dua peranan dimainkan oleh manusia dan satu sistem luaran.'}, vals:[[L({en:'Symbol',bm:'Simbol'}),L({en:'Stick figure or «system» box',bm:'Figura lidi atau kotak «system»'})],[L({en:'Count',bm:'Bilangan'}),'3']]},
+    {on:['uc0','uc1','uc2','uc3','uc4','uc5','uc6','uc7'], s:{en:'Use cases',bm:'Kes guna'}, n:{en:'Each oval is a use case, named verb + noun, such as Borrow item.',bm:'Setiap bujur ialah kes guna, dinamakan kata kerja + kata nama, seperti Pinjam item.'}, vals:[[L({en:'Symbol',bm:'Simbol'}),L({en:'Oval',bm:'Bujur'})],[L({en:'Count',bm:'Bilangan'}),'8']]},
+    {on:['e-m-0','e-m-1','e-m-3','e-m-4','e-m-5','e-l-1','e-l-2','e-l-6','e-l-7','e-g-5'], s:{en:'Associations',bm:'Perkaitan'}, n:{en:'Lines are associations. They show which actor takes part in which use case; they do not show order or data.',bm:'Garisan ialah perkaitan. Ia menunjukkan aktor mana terlibat dalam kes guna mana; ia tidak menunjukkan susunan atau data.'}, vals:[[L({en:'Symbol',bm:'Simbol'}),L({en:'Plain line',bm:'Garisan biasa'})],[L({en:'Count',bm:'Bilangan'}),'10']]}
+   ]}
+  ];
+}
+
+/* object (class instances) simulation */
+function objModelAt(i){
+  var p=getAB(), M={classes:[],rels:[]}, hl={};
+  var H=[[],['A'],['book'],['copy','l_cb'],['loan','l_al','l_lc'],['B'],['res','l_br','l_rb'],['loan','copy'],['l_al','l_lc','l_cb','l_br','l_rb']][Math.min(i,8)];
+  H.forEach(function(x){ hl[x]=1; });
+  var copySt = i<4 ? L(ST.available.l) : i<7 ? L(ST.onloan.l) : L(ST.onhold.l);
+  function add(id,at,name,attrs,x,y,dim){ if(i>=at) M.classes.push({id:id,obj:true,name:name,attrs:attrs,methods:[],x:x,y:y,hl:!!hl[id],dim:!!dim}); }
+  add('A',1,objName(p.A)+' : '+CLS[p.A.type],['memberId = "'+p.A.id+'"','maxLoans = '+LIMIT[p.A.type]],20,20);
+  add('loan',4,'loan1 : Loan',['loanDate = today','status = '+(i>=7?'closed':'open')],330,20,i>=7&&i<8);
+  add('copy',3,'copy123 : BookCopy',['barcode = "PTSL-000123"','status = '+copySt],610,20);
+  add('B',5,objName(p.B)+' : '+CLS[p.B.type],['memberId = "'+p.B.id+'"','maxLoans = '+LIMIT[p.B.type]],20,240);
+  add('res',6,'res1 : Reservation',['placedOn = today'],330,240);
+  add('book',2,'book1 : Book',['isbn = "978-1-305-49460-2"','title = "Systems Analysis','  and Design"'],610,240);
+  var fin=i>=8;
+  function rel(id,at,f,t0,lab,m1,m2){ if(i>=at) M.rels.push({from:f,to:t0,kind:'assoc',label:lab,m1:fin?m1:'',m2:fin?m2:'',hl:!!hl[id]}); }
+  rel('l_cb',3,'book','copy','has copies','1','1..*');
+  rel('l_al',4,'A','loan','has','1','0..*');
+  rel('l_lc',4,'loan','copy','covers','0..*','1');
+  rel('l_br',6,'B','res','places','1','0..*');
+  rel('l_rb',6,'res','book','for','0..*','1');
+  return M;
+}
+function objSimSVG(sc,i){ var M=objModelAt(i); if(!M.classes.length) return '<svg class="dg" viewBox="0 0 900 200" width="900" height="200" role="img" aria-label="'+esc(L({en:'Empty object diagram',bm:'Rajah objek kosong'}))+'">'+txt(450,100,L({en:'No objects yet. Press Next step to create the first one.',bm:'Belum ada objek. Tekan Langkah seterusnya untuk mencipta yang pertama.'}),'t-s','middle')+'</svg>';
+  return classSVG(M,false,L({en:'Object diagram simulation, step ',bm:'Simulasi rajah objek, langkah '})+i); }
+function objScen(){
+  var vv=function(i){ var M=objModelAt(i); return [[L({en:'Objects',bm:'Objek'}),String(M.classes.length)],[L({en:'Links',bm:'Pautan'}),String(M.rels.length)],['copy123.status', i<3?'—': i<4?L(ST.available.l): i<7?L(ST.onloan.l):L(ST.onhold.l)]]; };
+  var st=[
+   {s:{en:'Create {oa}',bm:'Cipta {oa}'}, n:{en:'new {cls}(): {A} becomes an object, an instance of {cls}. Its box name is underlined: object name : class.',bm:'new {cls}(): {A} menjadi objek, iaitu tika bagi {cls}. Nama kotaknya digaris bawah: nama objek : kelas.'}},
+   {s:{en:'Create book1',bm:'Cipta book1'}, n:{en:'The catalogue holds one Book object for the title Systems Analysis and Design (ISBN 978-1-305-49460-2).',bm:'Katalog menyimpan satu objek Book untuk judul Systems Analysis and Design (ISBN 978-1-305-49460-2).'}},
+   {s:{en:'Create copy123',bm:'Cipta copy123'}, n:{en:'A physical copy is a separate object, linked to its Book. A link is an instance of an association in the class diagram.',bm:'Naskhah fizikal ialah objek berasingan, dipautkan kepada Book. Pautan ialah tika bagi perkaitan dalam rajah kelas.'}},
+   {s:{en:'{oa} borrows',bm:'{oa} meminjam'}, n:{en:'Borrowing creates loan1 and two links: {oa} has loan1, and loan1 covers copy123. The copy’s status attribute changes to On loan.',bm:'Peminjaman mencipta loan1 dan dua pautan: {oa} mempunyai loan1, dan loan1 melibatkan copy123. Atribut status naskhah bertukar kepada Dipinjam.'}},
+   {s:{en:'Create {ob}',bm:'Cipta {ob}'}, n:{en:'{B} is another instance, this time of {clsB}. Same attributes, different values.',bm:'{B} ialah tika lain, kali ini bagi {clsB}. Atribut sama, nilai berbeza.'}},
+   {s:{en:'{ob} reserves',bm:'{ob} menempah'}, n:{en:'{B} places res1. Notice it links to book1, not copy123: a reservation is for a title, and any copy can fill it.',bm:'{B} membuat res1. Perhatikan ia dipautkan kepada book1, bukan copy123: tempahan adalah untuk judul, dan mana-mana naskhah boleh memenuhinya.'}},
+   {s:{en:'{oa} returns',bm:'{oa} memulangkan'}, n:{en:'loan1 is closed and fades, and copy123 goes On hold for {B}. Objects change state; their class does not change.',bm:'loan1 ditutup dan pudar, dan copy123 disimpan untuk {B}. Objek bertukar keadaan; kelasnya tidak berubah.'}},
+   {s:{en:'Check cardinality',bm:'Semak kardinaliti'}, n:{en:'The class diagram’s cardinality now appears on every link. Each object pattern obeys it: one loan covers exactly 1 copy, and one book has 1..* copies.',bm:'Kardinaliti rajah kelas kini dipaparkan pada setiap pautan. Setiap corak objek mematuhinya: satu pinjaman melibatkan tepat 1 naskhah, dan satu buku mempunyai 1..* naskhah.'}}
+  ];
+  return [{n:{en:'Borrow, reserve and return',bm:'Pinjam, tempah dan pulang'}, steps:st.map(function(x,k){ return {on:[], s:x.s, n:x.n, vals:vv(k+1)}; }), init:vv(0)}];
+}
+
+/* activity simulation */
+function actSimSVG(sc,i,X){
+  var A=X.A, V=X.V, id='aS', s=mkDefs(id);
+  function c(k){ return kk(A,V,k); }
+  function rect(k,x,y,w,h,lines){ var cc=c(k); return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="20" class="soft'+shp(cc)+'"/>'+boxText(x+w/2,y+h/2,lines,cc); }
+  function dia(k,cx,cy,lab){ var cc=c(k); return '<polygon points="'+cx+','+(cy-30)+' '+(cx+38)+','+cy+' '+cx+','+(cy+30)+' '+(cx-38)+','+cy+'" class="node'+shp(cc)+'"/>'+txt(cx-46,cy+4,lab,'t-b','end'); }
+  function e(k,d){ return arrowPath(id,c(k),d); }
+  var sc0=c('start'); s+='<circle cx="260" cy="26" r="12" class="'+(sc0==='h'?'hot':sc0==='s'?'seen':'ink')+'"/>';
+  s+=e('e1','M260 38V58')+rect('a1',150,60,220,44,[L({en:'Scan returned copy',bm:'Imbas naskhah dipulangkan'})]);
+  s+=e('e2','M260 104V128')+dia('d1',260,160,L({en:'Overdue?',bm:'Lewat?'}));
+  s+=e('e3','M298 160H418')+txt(358,152,L({en:'[yes]',bm:'[ya]'}),'t-s','middle')+rect('a2',420,132,230,56,[L({en:'Calculate fine by',bm:'Kira denda mengikut'}),L({en:'member class',bm:'kelas ahli'})]);
+  s+=e('e4','M260 190V248')+txt(268,224,L({en:'[no]',bm:'[tidak]'}),'t-s','start');
+  var m1=c('m1'); s+='<polygon points="260,250 280,270 260,290 240,270" class="node'+shp(m1)+'"/>';
+  s+=e('e5','M535 188V270H282');
+  s+=e('e6','M260 290V318')+rect('a3',150,320,220,44,[L({en:'Update copy status',bm:'Kemas kini status naskhah'})]);
+  s+=e('e7','M260 364V388')+dia('d2',260,420,L({en:'Reserved?',bm:'Ditempah?'}));
+  s+=e('e8','M298 420H418')+txt(358,412,L({en:'[yes]',bm:'[ya]'}),'t-s','middle')+rect('a4',420,392,230,56,[L({en:'Place on hold shelf,',bm:'Letak di rak simpanan,'}),L({en:'notify reserver',bm:'maklumkan penempah'})]);
+  s+=e('e9','M260 450V498')+txt(268,478,L({en:'[no]',bm:'[tidak]'}),'t-s','start');
+  s+=rect('a5',150,500,220,44,[L({en:'Return copy to shelf',bm:'Kembalikan naskhah ke rak'})]);
+  s+=e('e10','M260 544V572')+e('e11','M535 448V590H278');
+  var en=c('end'); s+='<circle cx="260" cy="590" r="14" fill="none" class="'+(en==='h'?'hotl':en==='s'?'seenl':'')+'" style="stroke:'+(en?'':'var(--ink)')+'" stroke-width="2"/><circle cx="260" cy="590" r="8" class="'+(en==='h'?'hot':en==='s'?'seen':'ink')+'"/>';
+  return '<svg class="dg" viewBox="0 0 680 620" width="680" height="620" role="img" aria-label="'+esc(L({en:'Activity diagram simulation for Return item',bm:'Simulasi rajah aktiviti untuk Pulang item'}))+'">'+s+'</svg>';
+}
+function actScen(){
+  function build(late,res){
+    var st=[], cur={status:L(ST.onloan.l)+(late?' ('+L(ST.overdue.l)+')':''), fine:'RM0.00', note:'—'};
+    function snap(){ return [['copy123.status',cur.status],[L({en:'Fine',bm:'Denda'}),cur.fine],[L({en:'Notified',bm:'Dimaklumkan'}),cur.note]]; }
+    function push(on,s0,n){ st.push({on:on,s:s0,n:n,vals:snap()}); }
+    push(['start'],{en:'Start',bm:'Mula'},{en:'Return item starts when {A} hands the copy over at the counter. The solid dot is the initial node.',bm:'Pulang item bermula apabila {A} menyerahkan naskhah di kaunter. Titik padu ialah nod awal.'});
+    push(['e1','a1'],{en:'Scan returned copy',bm:'Imbas naskhah'},{en:'The first action: the Librarian scans the copy. Rounded boxes are actions.',bm:'Tindakan pertama: Pustakawan mengimbas naskhah. Kotak bucu bulat ialah tindakan.'});
+    push(['e2','d1'],{en:'Overdue?',bm:'Lewat?'}, late?{en:'Decision: is it overdue? Yes: {A} is 7 days late.',bm:'Keputusan: adakah ia lewat? Ya: {A} lewat 7 hari.'}:{en:'Decision: is it overdue? No: it is back before the due date.',bm:'Keputusan: adakah ia lewat? Tidak: ia dipulangkan sebelum tarikh akhir.'});
+    if(late){ cur.fine='RM{fine}'; push(['e3','a2'],{en:'Calculate fine',bm:'Kira denda'},{en:'Follow the [yes] guard. The fine depends on the member’s class: a {cls} pays RM{rate} a day, so 7 days = RM{fine}.',bm:'Ikut pengawal [ya]. Denda bergantung pada kelas ahli: {cls} membayar RM{rate} sehari, jadi 7 hari = RM{fine}.'});
+      push(['e5','m1'],{en:'Merge',bm:'Gabung'},{en:'Both paths join again at the merge node.',bm:'Kedua-dua laluan bergabung semula di nod gabung.'}); }
+    else push(['e4','m1'],{en:'Merge',bm:'Gabung'},{en:'Follow the [no] guard straight to the merge node. No fine is calculated.',bm:'Ikut pengawal [tidak] terus ke nod gabung. Tiada denda dikira.'});
+    push(['e6','a3'],{en:'Update copy status',bm:'Kemas kini status'},{en:'Every path updates the copy’s status, which is why this action comes after the merge.',bm:'Setiap laluan mengemas kini status naskhah, sebab itu tindakan ini selepas nod gabung.'});
+    push(['e7','d2'],{en:'Reserved?',bm:'Ditempah?'}, res?{en:'Second decision: has someone reserved this copy? Yes: {B} is waiting for it.',bm:'Keputusan kedua: adakah seseorang menempah naskhah ini? Ya: {B} sedang menunggu.'}:{en:'Second decision: has someone reserved this copy? No.',bm:'Keputusan kedua: adakah seseorang menempah naskhah ini? Tidak.'});
+    if(res){ cur.status=L(ST.onhold.l); cur.note='{B}'; push(['e8','a4'],{en:'Hold and notify',bm:'Simpan dan maklum'},{en:'The copy goes to the hold shelf and {B} is notified. Status: On hold.',bm:'Naskhah ke rak simpanan dan {B} dimaklumkan. Status: Disimpan.'});
+      push(['e11','end'],{en:'End',bm:'Tamat'},{en:'The bullseye is the final node: the activity is complete.',bm:'Bulatan sasaran ialah nod akhir: aktiviti selesai.'}); }
+    else { cur.status=L(ST.available.l); push(['e9','a5'],{en:'Return to shelf',bm:'Kembali ke rak'},{en:'The copy goes back on the shelf. Status: Available.',bm:'Naskhah dikembalikan ke rak. Status: Tersedia.'});
+      push(['e10','end'],{en:'End',bm:'Tamat'},{en:'The bullseye is the final node: the activity is complete.',bm:'Bulatan sasaran ialah nod akhir: aktiviti selesai.'}); }
+    var init=[['copy123.status',L(ST.onloan.l)+(late?' ('+L(ST.overdue.l)+')':'')],[L({en:'Fine',bm:'Denda'}),'RM0.00'],[L({en:'Notified',bm:'Dimaklumkan'}),'—']];
+    return {steps:st, init:init};
+  }
+  var a=build(false,false), b=build(true,false), c=build(true,true);
+  return [ {n:{en:'On time',bm:'Tepat masa'}, steps:a.steps, init:a.init}, {n:{en:'Late',bm:'Lewat'}, steps:b.steps, init:b.init}, {n:{en:'Late and reserved',bm:'Lewat dan ditempah'}, steps:c.steps, init:c.init} ];
+}
+
+/* business process (swimlane) simulation */
+function bpmSimSVG(sc,i,X){
+  var A=X.A, V=X.V, id='bS', s=mkDefs(id);
+  function c(k){ return kk(A,V,k); }
+  var lanes=[L({en:'Member',bm:'Ahli'}),'e-Pinjam',L({en:'Librarian',bm:'Pustakawan'})], ly=[70,190,310];
+  lanes.forEach(function(n,k){ s+='<rect x="0" y="'+(10+k*120)+'" width="1120" height="120" class="node" style="fill:'+(k%2?'var(--surface-2)':'var(--surface)')+'"/><line x1="96" y1="'+(10+k*120)+'" x2="96" y2="'+(130+k*120)+'" class="ln"/>'+txt(48,ly[k]+5,n,'t-b','middle'); });
+  function box(k,cx,lane,lines,w){ w=w||120; var cc=c(k), y=ly[lane]; return '<rect x="'+(cx-w/2)+'" y="'+(y-28)+'" width="'+w+'" height="56" rx="10" class="soft'+shp(cc)+'"/>'+boxText(cx,y,lines,cc); }
+  function circ(k,cx,lane,end){ var cc=c(k), y=ly[lane]; return '<circle cx="'+cx+'" cy="'+y+'" r="'+(end?14:12)+'" class="node'+shp(cc)+'" style="stroke-width:'+(end?4:1.6)+'"/>'; }
+  function e(k,d){ return arrowPath(id,c(k),d); }
+  s+=circ('start',125,0)+e('p1','M137 70H155')+box('b1',215,0,[L({en:'Place',bm:'Buat'}),L({en:'reservation',bm:'tempahan'})]);
+  s+=e('p2','M215 98V190H290')+box('b2',350,1,[L({en:'Record',bm:'Rekod'}),L({en:'reservation',bm:'tempahan'})]);
+  s+=e('p3','M350 218V310H425')+box('b3',485,2,[L({en:'Check in',bm:'Terima'}),L({en:'returned copy',bm:'pulangan naskhah'})]);
+  s+=e('p4','M485 282V190H560')+box('b4',620,1,[L({en:'Hold copy,',bm:'Simpan naskhah,'}),L({en:'notify member',bm:'maklumkan ahli'})]);
+  s+=e('p5','M620 162V70H695')+box('b5',755,0,[L({en:'Receive',bm:'Terima'}),L({en:'notice',bm:'notis'})]);
+  s+=e('p6','M755 98V190H850');
+  var g=c('g1'); s+='<polygon points="880,160 910,190 880,220 850,190" class="node'+shp(g)+'"/>'+txt(880,150,L({en:'Collected in 3 days?',bm:'Diambil dalam 3 hari?'}),'t-s','middle');
+  s+=e('p7','M910 190H945')+txt(927,182,L({en:'no',bm:'tidak'}),'t-s','middle')+box('b7',1000,1,[L({en:'Release',bm:'Lepaskan'}),L({en:'hold',bm:'simpanan'})],110);
+  s+=e('p8','M880 220V310H945')+txt(888,268,L({en:'yes',bm:'ya'}),'t-s','start')+box('b6',1000,2,[L({en:'Check out',bm:'Pinjamkan'}),L({en:'to member',bm:'kepada ahli'})],110);
+  s+=e('p9','M1055 310H1076')+circ('endY',1090,2,true)+e('p10','M1055 190H1076')+circ('endN',1090,1,true);
+  return '<svg class="dg" viewBox="0 0 1120 380" width="1120" height="380" role="img" aria-label="'+esc(L({en:'Business process model simulation: reserve and collect a book',bm:'Simulasi model proses perniagaan: tempah dan ambil buku'}))+'">'+s+'</svg>';
+}
+function bpmScen(){
+  function build(collected){
+    var st=[], cur={res:'—',copy:L(ST.onloan.l),lane:L({en:'Member',bm:'Ahli'})};
+    function snap(){ return [[L({en:'Reservation',bm:'Tempahan'}),cur.res],['copy123.status',cur.copy],[L({en:'Work is with',bm:'Kerja di tangan'}),cur.lane]]; }
+    function push(on,s0,n){ st.push({on:on,s:s0,n:n,vals:snap()}); }
+    var Mm=L({en:'Member',bm:'Ahli'}), Sy='e-Pinjam', Lb=L({en:'Librarian',bm:'Pustakawan'});
+    push(['start'],{en:'Start',bm:'Mula'},{en:'{B} wants a title that {A} has on loan. The process starts in the Member lane.',bm:'{B} mahukan judul yang sedang dipinjam oleh {A}. Proses bermula di lorong Ahli.'});
+    cur.res=L({en:'requested',bm:'diminta'}); push(['p1','b1'],{en:'Place reservation',bm:'Buat tempahan'},{en:'{B} places a reservation online. Each lane shows who does the work.',bm:'{B} membuat tempahan dalam talian. Setiap lorong menunjukkan siapa yang melakukan kerja.'});
+    cur.res=L({en:'recorded',bm:'direkod'}); cur.lane=Sy; push(['p2','b2'],{en:'Record reservation',bm:'Rekod tempahan'},{en:'The flow crosses into the e-Pinjam lane: the system records it. Crossing a lane means the work changes hands.',bm:'Aliran melintasi ke lorong e-Pinjam: sistem merekodkannya. Melintasi lorong bermaksud kerja bertukar tangan.'});
+    cur.copy=L({en:'returned',bm:'dipulangkan'}); cur.lane=Lb; push(['p3','b3'],{en:'Check in copy',bm:'Terima pulangan'},{en:'When {A} returns the copy, the Librarian checks it in.',bm:'Apabila {A} memulangkan naskhah, Pustakawan menerimanya.'});
+    cur.copy=L(ST.onhold.l); cur.res=L({en:'ready to collect',bm:'sedia diambil'}); cur.lane=Sy; push(['p4','b4'],{en:'Hold and notify',bm:'Simpan dan maklum'},{en:'e-Pinjam puts the copy on hold for 3 days and sends a notice.',bm:'e-Pinjam menyimpan naskhah selama 3 hari dan menghantar notis.'});
+    cur.lane=Mm; push(['p5','b5'],{en:'Receive notice',bm:'Terima notis'},{en:'{B} receives the notice by e-mail.',bm:'{B} menerima notis melalui e-mel.'});
+    cur.lane=Sy; push(['p6','g1'],{en:'Gateway',bm:'Get laluan'}, collected?{en:'The diamond is a gateway: collected within 3 days? Yes.',bm:'Berlian ialah get laluan: diambil dalam 3 hari? Ya.'}:{en:'The diamond is a gateway: collected within 3 days? No.',bm:'Berlian ialah get laluan: diambil dalam 3 hari? Tidak.'});
+    if(collected){ cur.copy=L(ST.onloan.l); cur.res=L({en:'fulfilled',bm:'dipenuhi'}); cur.lane=Lb; push(['p8','b6'],{en:'Check out',bm:'Pinjamkan'},{en:'The Librarian checks the copy out to {B}.',bm:'Pustakawan meminjamkan naskhah kepada {B}.'});
+      push(['p9','endY'],{en:'End',bm:'Tamat'},{en:'The thick circle is the end event: the reservation is fulfilled.',bm:'Bulatan tebal ialah peristiwa akhir: tempahan dipenuhi.'}); }
+    else { cur.copy=L(ST.available.l); cur.res=L({en:'expired',bm:'tamat tempoh'}); push(['p7','b7'],{en:'Release hold',bm:'Lepaskan simpanan'},{en:'e-Pinjam releases the hold and the copy becomes Available.',bm:'e-Pinjam melepaskan simpanan dan naskhah menjadi Tersedia.'});
+      push(['p10','endN'],{en:'End',bm:'Tamat'},{en:'The process ends with the reservation expired.',bm:'Proses tamat dengan tempahan tamat tempoh.'}); }
+    return st;
+  }
+  var init=[[L({en:'Reservation',bm:'Tempahan'}),'—'],['copy123.status',L(ST.onloan.l)],[L({en:'Work is with',bm:'Kerja di tangan'}),'—']];
+  return [ {n:{en:'Collected',bm:'Diambil'}, steps:build(true), init:init}, {n:{en:'Not collected',bm:'Tidak diambil'}, steps:build(false), init:init} ];
+}
+
+var SIMDEF = {
+ usecase:{ n:{en:'Use case diagram',bm:'Rajah kes guna'}, sec:'6.4.2', q:{en:'Watch actors start use cases inside the e-Pinjam boundary.',bm:'Lihat aktor memulakan kes guna dalam sempadan e-Pinjam.'}, scen:ucScen, svg:ucSimSVG,
+   alt:{en:'Use case diagram for e-Pinjam. Each step highlights an actor, its association and the use case it starts; earlier steps stay outlined in teal.',bm:'Rajah kes guna e-Pinjam. Setiap langkah menyerlahkan aktor, perkaitannya dan kes guna yang dimulakan; langkah terdahulu kekal bergaris hijau kebiruan.'} },
+ objects:{ n:{en:'Class diagram: objects at run time',bm:'Rajah kelas: objek semasa larian'}, sec:'6.2 · 6.4.3', q:{en:'Watch objects and links appear as members borrow, reserve and return, then check them against cardinality.',bm:'Lihat objek dan pautan muncul apabila ahli meminjam, menempah dan memulangkan, kemudian semak dengan kardinaliti.'}, scen:objScen, svg:objSimSVG,
+   alt:{en:'An object diagram that grows one step at a time: two member objects, book1, copy123, loan1 and res1, with links between them. The last step shows the class diagram cardinality on each link.',bm:'Rajah objek yang berkembang satu langkah demi satu langkah: dua objek ahli, book1, copy123, loan1 dan res1, dengan pautan antaranya. Langkah terakhir menunjukkan kardinaliti rajah kelas pada setiap pautan.'} },
+ sequence:{ n:{en:'Sequence diagram',bm:'Rajah jujukan'}, sec:'6.4.4', q:{en:'Messages between objects, in time order.',bm:'Mesej antara objek, mengikut masa.'} },
+ state:{ n:{en:'State transition diagram',bm:'Rajah peralihan keadaan'}, sec:'6.4.5', q:{en:'The life of one book copy, event by event.',bm:'Kitaran hayat satu naskhah, peristiwa demi peristiwa.'} },
+ activity:{ n:{en:'Activity diagram',bm:'Rajah aktiviti'}, sec:'6.4.6', q:{en:'Follow the flow of Return item through its decisions. Choose a case and see which path it takes.',bm:'Ikuti aliran Pulang item melalui keputusannya. Pilih kes dan lihat laluan yang diambil.'}, scen:actScen, svg:actSimSVG,
+   alt:{en:'Activity diagram for Return item: start, scan the copy, decide whether it is overdue (calculate a fine if yes), merge, update status, decide whether it is reserved (hold and notify if yes, otherwise return to shelf), end. The current step is highlighted and the path taken so far is outlined in teal.',bm:'Rajah aktiviti Pulang item: mula, imbas naskhah, tentukan sama ada lewat (kira denda jika ya), gabung, kemas kini status, tentukan sama ada ditempah (simpan dan maklum jika ya, jika tidak kembali ke rak), tamat. Langkah semasa diserlahkan dan laluan setakat ini bergaris hijau kebiruan.'} },
+ bpm:{ n:{en:'Business process model',bm:'Model proses perniagaan'}, sec:'6.4.7', q:{en:'Follow a reservation across three swimlanes, like a BPM simulation tool.',bm:'Ikuti tempahan merentas tiga lorong renang, seperti alat simulasi BPM.'}, scen:bpmScen, svg:bpmSimSVG,
+   alt:{en:'Swimlanes for Member, e-Pinjam and Librarian. Member places a reservation; e-Pinjam records it; the Librarian checks in the returned copy; e-Pinjam holds it and notifies the member; the member receives the notice; a gateway asks whether it was collected within 3 days. If yes, the Librarian checks it out to the member; if no, e-Pinjam releases the hold.',bm:'Lorong untuk Ahli, e-Pinjam dan Pustakawan. Ahli membuat tempahan; e-Pinjam merekodkannya; Pustakawan menerima naskhah yang dipulangkan; e-Pinjam menyimpannya dan memaklumkan ahli; ahli menerima notis; get laluan bertanya sama ada ia diambil dalam 3 hari. Jika ya, Pustakawan meminjamkannya kepada ahli; jika tidak, e-Pinjam melepaskan simpanan.'} }
+};
+var SIMORDER=['usecase','objects','sequence','state','activity','bpm'];
+function simDone(k){ return k==='sequence'? !!S.progress['learn-4'] : k==='state'? !!S.progress['learn-1'] : !!S.progress['sim-'+k]; }
+function curScenList(){ var l=SIMDEF[GS.sim].scen(); if(GS.sc>=l.length) GS.sc=0; return l; }
+function gsSets(steps,i){ var A={},V={}; for(var k=0;k<i;k++){ (steps[k].on||[]).forEach(function(x){ if(k===i-1) A[x]=1; else V[x]=1; }); } return {A:A,V:V}; }
+function gsLen(){ return curScenList()[GS.sc].steps.length; }
+function gsAnnounce(){ var sc=curScenList()[GS.sc], st=sc.steps[GS.i-1], o=abVars(); if(st) announce(GS.i+' / '+sc.steps.length+'. '+fmt(L(st.n),o)); }
+function gsFocusView(){ var b=main.querySelector('.simbar'); if(!b||!b.scrollIntoView) return; var rm=S.prefs.motion||(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches); try{ b.scrollIntoView({behavior:rm?'auto':'smooth', block:'start'}); }catch(e){ b.scrollIntoView(); } }
+function gsTick(){ var n=gsLen(); if(GS.i<n) GS.i++; if(GS.i>=n){ stopGS(); done('sim-'+GS.sim); } rerenderKeep(); gsAnnounce(); if(GS.running) GS.timer=setTimeout(gsTick, GS.speed); }
+function gsHTML(){
+  var D=SIMDEF[GS.sim], list=curScenList(), sc=list[GS.sc], n=sc.steps.length, i=Math.min(GS.i,n), fin=i>=n, st=i>0?sc.steps[i-1]:null, o=abVars(), h='';
+  h+='<div class="panel simbar">';
+  h+='<div class="play-ctl">';
+  if(list.length>1){ h+='<div class="gtabs" role="group" aria-label="'+esc(L({en:'Scenario',bm:'Senario'}))+'">'; list.forEach(function(x,k){ h+='<button type="button" data-act="gsSc" data-i="'+k+'" aria-pressed="'+(k===GS.sc)+'">'+esc(L(x.n))+'</button>'; }); h+='</div>'; }
+  h+='<button type="button" class="btn ghost" data-act="gsBack"'+(i===0?' disabled':'')+'>'+esc(L({en:'Back',bm:'Undur'}))+'</button>';
+  h+='<button type="button" class="btn" data-act="gsNext"'+(fin?' disabled':'')+'>'+esc(L({en:'Next step',bm:'Langkah seterusnya'}))+'</button>';
+  h+='<button type="button" class="btn sec" data-act="gsAuto" aria-pressed="'+GS.running+'">'+(GS.running? '❚❚ '+esc(L({en:'Pause',bm:'Jeda'})) : '▶ '+esc(fin? L({en:'Auto play again',bm:'Main automatik semula'}) : L({en:'Auto play',bm:'Main automatik'})))+'</button>';
+  h+='<button type="button" class="btn ghost" data-act="gsReset">'+esc(L({en:'Reset',bm:'Tetapkan semula'}))+'</button>';
+  h+='<label class="inl" for="gsSpeed">'+esc(L({en:'Speed',bm:'Kelajuan'}))+'<select id="gsSpeed">'+[[3400,{en:'Slow',bm:'Perlahan'}],[2200,{en:'Normal',bm:'Biasa'}],[1300,{en:'Fast',bm:'Laju'}]].map(function(x){ return '<option value="'+x[0]+'"'+(GS.speed===x[0]?' selected':'')+'>'+esc(L(x[1]))+'</option>'; }).join('')+'</select></label>';
+  h+='<div class="simprog"><label for="gsProg" class="hint">'+esc(L({en:'Step',bm:'Langkah'}))+' '+i+' / '+n+'</label><progress id="gsProg" max="'+n+'" value="'+i+'">'+i+' / '+n+'</progress></div></div>';
+  h+='<div class="row" style="align-items:flex-start;gap:8px;margin-top:10px"><p class="note narr" id="gsNarr" style="flex:1;margin:0">'+(st? '<b>'+esc(i+'. '+fmt(L(st.s),o))+'.</b> '+esc(fmt(L(st.n),o)) : esc(L(D.q)+' '+L({en:'Press Next step or Auto play to begin.',bm:'Tekan Langkah seterusnya atau Main automatik untuk bermula.'})))+'</p>'+listenBtns('gsNarr')+'</div>';
+  if(fin) h+='<p class="narr" style="margin-top:6px"><b>'+esc(L({en:'Scenario complete.',bm:'Senario selesai.'}))+'</b> '+esc(list.length>1? L({en:'Try another scenario above.',bm:'Cuba senario lain di atas.'}) : L({en:'Press Reset to watch it again.',bm:'Tekan Tetapkan semula untuk menontonnya lagi.'}))+'</p>';
+  h+='</div>';
+  h+='<div class="dgwrap fit2">'+D.svg(sc,i,gsSets(sc.steps,i))+'</div>';
+  h+='<p class="hint" style="margin-top:6px">'+esc(L({en:'Key: the current step is filled in blue; steps already passed are outlined in teal with a thicker line.',bm:'Petunjuk: langkah semasa diisi biru; langkah yang telah dilalui bergaris hijau kebiruan dengan garisan lebih tebal.'}))+'</p>';
+  var vals = st&&st.vals ? st.vals : (sc.init||[]);
+  h+='<div class="grid2" style="margin-top:10px"><div class="panel"><h4 style="margin-top:0">'+esc(L({en:'Values now',bm:'Nilai sekarang'}))+'</h4><ul class="objstate">'+vals.map(function(r){ return '<li><span>'+esc(fmt(r[0],o))+'</span><b>'+esc(fmt(r[1],o))+'</b></li>'; }).join('')+'</ul></div>';
+  h+='<div class="panel"><h4 style="margin-top:0">'+esc(L({en:'Steps so far',bm:'Langkah setakat ini'}))+'</h4>'+(i? '<ol class="steplist">'+sc.steps.slice(0,i).map(function(x,k){ return '<li'+(k===i-1?' aria-current="step"':'')+'>'+esc(fmt(L(x.s),o))+'</li>'; }).join('')+'</ol>' : '<p class="muted">—</p>')+'</div></div>';
+  h+='<details class="alt"><summary>'+esc(t('textAlt'))+'</summary><p>'+esc(L(D.alt))+'</p></details>';
+  return h;
+}
+function simHubHTML(){
+  var h='<h2 tabindex="-1" id="pageH">'+esc(L({en:'Simulations',bm:'Simulasi'}))+'</h2>';
+  h+='<p class="lede">'+esc(L({en:'Each Chapter 6 diagram, played step by step with the e-Pinjam case.',bm:'Setiap rajah Bab 6, dimainkan langkah demi langkah dengan kes e-Pinjam.'}))+'</p>';
+  h+='<div class="gtabs simpick" role="group" aria-label="'+esc(L({en:'Choose a simulation',bm:'Pilih simulasi'}))+'">';
+  SIMORDER.forEach(function(k){ var d=simDone(k); h+='<button type="button" data-act="gsSim" data-k="'+k+'" aria-pressed="'+(GS.sim===k)+'"><span class="sec">'+esc(SIMDEF[k].sec)+'</span>'+(d?'✓ ':'')+esc(L(SIMDEF[k].n))+(d?'<span class="sr"> ('+esc(L({en:'done',bm:'selesai'}))+')</span>':'')+'</button>'; });
+  h+='</div>';
+  var D=SIMDEF[GS.sim];
+  h+='<section aria-labelledby="stepH"><h3 id="stepH" style="margin-top:4px">'+esc(L(D.n))+'</h3>'+((GS.sim==='sequence'||GS.sim==='state')?'<p class="answers">'+esc(L(D.q))+'</p>':'');
+  if(GS.sim==='sequence') h+=seqSimHTML(true);
+  else if(GS.sim==='state'){
+    var m=S.sim;
+    h+='<div class="sim"><div>'+playPanel()+'<div class="uml"><div class="hd"><u>copy123 : BookCopy</u></div><div class="cp">status = <b>'+esc(L(ST[m.state].l))+'</b><br>renewals = '+m.renewals+'<br>borrower = '+esc(who(m.borrower))+'<br>reservedBy = '+esc(who(m.reserver))+'</div></div>';
+    h+='<p class="hint" style="margin-top:10px">'+esc(L({en:'To send your own messages to the copy, open Learn step 2.',bm:'Untuk menghantar mesej anda sendiri kepada naskhah, buka langkah 2 Belajar.'}))+' <button type="button" class="btn ghost sm" data-act="learnJump" data-i="1">'+esc(L({en:'Open Learn step 2',bm:'Buka langkah 2 Belajar'}))+'</button></p></div><div class="dgwrap fit">'+stSVG(m.state)+'</div></div>';
+  }
+  else h+=gsHTML();
+  h+='</section>';
+  var ix=SIMORDER.indexOf(GS.sim);
+  h+='<div class="pager">'+(ix>0?'<button type="button" class="btn ghost" data-act="gsSim" data-k="'+SIMORDER[ix-1]+'">'+esc(t('prev'))+': '+esc(L(SIMDEF[SIMORDER[ix-1]].n))+'</button>':'<span></span>')+(ix<SIMORDER.length-1?'<button type="button" class="btn" data-act="gsSim" data-k="'+SIMORDER[ix+1]+'">'+esc(t('next'))+': '+esc(L(SIMDEF[SIMORDER[ix+1]].n))+'</button>':'<button type="button" class="btn" data-act="tab" data-tab="practice">'+esc(L({en:'Go to Practice',bm:'Pergi ke Latihan'}))+'</button>')+'</div>';
+  return h;
+}
+
+/* guided scenario + resets */
+var SCRIPT = [
+ {m:'checkOut()', r:'A', n:{en:'{A} borrows the copy at the counter.',bm:'{A} meminjam naskhah di kaunter.'}},
+ {m:'renew()', r:'A', n:{en:'{A} renews it online before the due date.',bm:'{A} memperbaharuinya dalam talian sebelum tarikh akhir.'}},
+ {m:'reserve()', r:'B', n:{en:'{B} reserves the same copy.',bm:'{B} menempah naskhah yang sama.'}},
+ {m:'renew()', r:'A', n:{en:'{A} tries to renew again. Watch the rule: a reserved copy cannot be renewed.',bm:'{A} cuba memperbaharui lagi. Perhatikan peraturan: naskhah ditempah tidak boleh diperbaharui.'}},
+ {m:'dueDatePasses', r:null, n:{en:'The due date passes without a return. This is an event, not a message from another object.',bm:'Tarikh akhir berlalu tanpa pemulangan. Ini ialah peristiwa, bukan mesej daripada objek lain.'}},
+ {m:'checkIn()', r:null, n:{en:'{A} returns it late. The fine depends on {A}’s class, and the reservation sends the copy to the hold shelf.',bm:'{A} memulangkannya lewat. Denda bergantung pada kelas {A}, dan tempahan menghantar naskhah ke rak simpanan.'}},
+ {m:'holdExpires', r:null, n:{en:'{B} does not collect it within 3 days.',bm:'{B} tidak mengambilnya dalam tempoh 3 hari.'}},
+ {m:'checkOut()', r:'B', n:{en:'{B} borrows the copy after all.',bm:'{B} akhirnya meminjam naskhah itu.'}},
+ {m:'dueDatePasses', r:null, n:{en:'{B}’s due date passes too.',bm:'Tarikh akhir {B} juga berlalu.'}},
+ {m:'markLost()', r:null, n:{en:'The copy is never returned and is declared lost.',bm:'Naskhah tidak pernah dipulangkan dan diisytiharkan hilang.'}}
+];
+var PLAY = { i:0, running:false, timer:null, speed:1600 };
+function freshSim(){ return {state:'available',reserved:false,renewals:0,log:[],borrower:null,reserver:null}; }
+function defInst(){ return [ {uid:uid(), name:'Aisyah Rahman', id:'A201234', type:'student'}, {uid:uid(), name:'Dr. Ravi Kumar', id:'K007712', type:'staff'} ]; }
+function stopPlay(){ PLAY.running=false; if(PLAY.timer){ clearTimeout(PLAY.timer); PLAY.timer=null; } }
+function playStep(){
+  if(PLAY.i>=SCRIPT.length){ stopPlay(); return; }
+  if(PLAY.i===0) S.sim=freshSim();
+  if(S.instances.length<2){ stopPlay(); return; }
+  var s=SCRIPT[PLAY.i], ru= s.r==='A' ? S.instances[0].uid : s.r==='B' ? S.instances[1].uid : null; simSend(s.m, ru); PLAY.i++;
+  var last=S.sim.log[0];
+  announce(L({en:'Step ',bm:'Langkah '})+PLAY.i+' / '+SCRIPT.length+'. '+fill(L(s.n))+' '+(last?(last.ok?L(SIMTXT.ok):L(SIMTXT.no))+': '+last.detail:''));
+  if(PLAY.i>=SCRIPT.length) stopPlay();
+}
+function rerenderKeep(){
+  var a=document.activeElement, sel=null;
+  if(a && main.contains(a)){ var da=a.getAttribute('data-act'); if(da){ sel='[data-act="'+da+'"]'+(a.getAttribute('data-i')!==null?'[data-i="'+a.getAttribute('data-i')+'"]':''); } else if(a.id){ sel='#'+a.id; } }
+  renderMain();
+  if(sel){ var n=main.querySelector(sel); if(n) n.focus(); }
+}
+function tick(){ playStep(); rerenderKeep(); if(PLAY.running){ PLAY.timer=setTimeout(tick, PLAY.speed); } }
+function playPanel(){
+  if(S.instances.length<2){ return '<div class="panel" style="margin:0 0 18px"><h4 style="margin-top:0">'+esc(L({en:'Guided scenario: the life of one copy',bm:'Senario berpandu: kitaran hayat satu naskhah'}))+'</h4><p>'+esc(L({en:'The guided scenario needs two members: one to borrow and one to reserve. Add another member in step 1.',bm:'Senario berpandu memerlukan dua ahli: seorang untuk meminjam dan seorang untuk menempah. Tambah seorang lagi ahli dalam langkah 1.'}))+'</p><button type="button" class="btn sec sm" data-act="learnGo" data-i="0">'+esc(L({en:'Go to step 1',bm:'Pergi ke langkah 1'}))+'</button></div>'; }
+  var n=SCRIPT.length, i=PLAY.i, fin=i>=n, h='<div class="panel" style="margin:0 0 18px"><h4 style="margin-top:0">'+esc(L({en:'Guided scenario: the life of one copy',bm:'Senario berpandu: kitaran hayat satu naskhah'}))+'</h4>';
+  h+='<p class="hint" style="margin-bottom:12px">'+esc(L({en:'Play the whole story automatically, or move through it one step at a time. Each step sends one message to the copy.',bm:'Mainkan keseluruhan cerita secara automatik, atau gerak satu langkah demi satu langkah. Setiap langkah menghantar satu mesej kepada naskhah.'}))+'</p>';
+  h+='<div class="play-ctl"><button type="button" class="btn" data-act="playauto" aria-pressed="'+PLAY.running+'">'+(PLAY.running? '❚❚ '+esc(L({en:'Pause',bm:'Jeda'})) : '▶ '+esc(fin? L({en:'Play again',bm:'Main semula'}) : i>0? L({en:'Resume automatic play',bm:'Sambung main automatik'}) : L({en:'Play automatically',bm:'Main secara automatik'})))+'</button>';
+  h+='<button type="button" class="btn sec" data-act="playstep">'+esc(fin? L({en:'Start step by step again',bm:'Mula langkah demi langkah semula'}) : L({en:'Next step',bm:'Langkah seterusnya'}))+'</button>';
+  h+='<button type="button" class="btn ghost" data-act="resetex" data-i="1">'+esc(L({en:'Reset',bm:'Tetapkan semula'}))+'</button>';
+  h+='<label class="f" for="playSpeed">'+esc(L({en:'Speed',bm:'Kelajuan'}))+'<select id="playSpeed">'+[[2600,{en:'Slow',bm:'Perlahan'}],[1600,{en:'Normal',bm:'Biasa'}],[900,{en:'Fast',bm:'Laju'}]].map(function(o){ return '<option value="'+o[0]+'"'+(PLAY.speed===o[0]?' selected':'')+'>'+esc(L(o[1]))+'</option>'; }).join('')+'</select></label></div>';
+  h+='<div style="margin-top:14px"><label for="playProg" class="hint">'+esc(L({en:'Step',bm:'Langkah'}))+' '+i+' / '+n+'</label><progress id="playProg" max="'+n+'" value="'+i+'">'+i+' / '+n+'</progress></div>';
+  if(i===0) h+='<p class="narr muted">'+esc(L({en:'Press Play automatically or Next step to begin.',bm:'Tekan Main secara automatik atau Langkah seterusnya untuk bermula.'}))+'</p>';
+  else { var s=SCRIPT[i-1], last=S.sim.log[0]; h+='<p class="note narr"><b>'+esc(L({en:'Step ',bm:'Langkah '})+i)+':</b> '+esc(fill(L(s.n)))+' <code>'+esc(s.m)+'</code>'+(last?' <span class="tag '+(last.ok?'ok':'no')+'">'+(last.ok?'✓ ':'✗ ')+esc(last.ok?L(SIMTXT.ok):L(SIMTXT.no))+'</span>':'')+'</p>'; }
+  if(fin) h+='<p class="narr"><b>'+esc(L({en:'Scenario complete.',bm:'Senario selesai.'}))+'</b> '+esc(L({en:'The copy visited every state. Now try your own messages below.',bm:'Naskhah telah melalui setiap keadaan. Sekarang cuba mesej anda sendiri di bawah.'}))+'</p>';
+  return h+'</div>';
+}
+function resetBtn(k){ return '<div class="row" style="margin-top:14px"><button type="button" class="btn ghost sm" data-act="resetex" data-i="'+k+'">'+esc(L({en:'Reset example',bm:'Tetapkan semula contoh'}))+'</button></div>'; }
+function resetExample(k){
+  if(k===0){ S.instances=defInst(); editInst=null; instErr=''; S.actor=null; stopPlay(); PLAY.i=0; S.sim=freshSim(); }
+  if(k===1){ stopPlay(); PLAY.i=0; S.sim=freshSim(); }
+  if(k===2) S.days=5;
+  if(k===3) S.gallery=0;
+  if(k===4){ stopSeq(); SEQ.i=0; }
+  save();
+}
+function galleryNote(){
+  var k=S.gallery, t0='';
+  if(k===0) t0=L({en:'The Member actor is played by your members from step 1.',bm:'Aktor Ahli dimainkan oleh ahli anda dari langkah 1.'});
+  if(k===1) t0=L({en:'Dashed boxes at the bottom are your members from step 1, linked to their class. Update or delete a member in step 1 to change them.',bm:'Kotak bergaris putus di bawah ialah ahli anda dari langkah 1, dihubungkan kepada kelas mereka. Kemas kini atau padam ahli dalam langkah 1 untuk mengubahnya.'});
+  if(k===2) t0=L({en:'The member lifeline is the acting member from step 2.',bm:'Garis hayat ahli ialah ahli bertindak dari langkah 2.'});
+  if(k===3) t0=L({en:'The highlighted state is where copy123 is right now in step 2.',bm:'Keadaan yang diserlahkan ialah kedudukan semasa copy123 dalam langkah 2.'});
+  if(k===4) t0=L({en:'The fine step uses each member’s own calculateFine(), as in step 3.',bm:'Langkah denda menggunakan calculateFine() setiap ahli sendiri, seperti dalam langkah 3.'});
+  return '<p class="hint">'+esc(t0)+'</p>';
+}
+function galleryAltExtra(){
+  var k=S.gallery;
+  if(k===1 && S.instances.length) return ' '+L({en:'Objects: ',bm:'Objek: '})+S.instances.map(function(m){ return objName(m)+' : '+CLS[m.type]; }).join(', ')+'.';
+  if(k===3) return ' '+L({en:'Current state: ',bm:'Keadaan semasa: '})+L(ST[S.sim.state].l)+'.';
+  if(k===2){ var am=instBy(S.sim.borrower)||instBy(actingId()); if(am) return ' '+L({en:'The member lifeline is ',bm:'Garis hayat ahli ialah '})+objName(am)+' : '+CLS[am.type]+'.'; }
+  return '';
+}
+function fineCards(d){
+  if(!S.instances.length) return '<p class="muted">'+esc(L({en:'No members yet. Create some in step 1 to send them calculateFine().',bm:'Belum ada ahli. Cipta dalam langkah 1 untuk menghantar calculateFine() kepada mereka.'}))+'</p>';
+  return S.instances.map(function(m){ var rate=RATE[m.type];
+    return '<div class="uml"><div class="hd"><u>'+esc(objName(m))+' : '+CLS[m.type]+'</u></div><div class="cp"><code>calculateFine('+d+')</code><div class="fine-out">RM'+(d*rate).toFixed(2)+'</div><span class="hint">'+d+' × RM'+rate.toFixed(2)+' ('+CLS[m.type]+'.calculateFine)</span></div></div>'; }).join('');
+}
+function stepper(list,cur,key){
+  var h='<ol class="stepper" aria-label="'+esc(L({en:'Steps',bm:'Langkah'}))+'">';
+  list.forEach(function(x,k){ var dn= key==='practice' ? S.progress[PRACTICE[k].key] : key==='builderStep' ? S.progress[['builder-class','builder-uc'][k]] : S.progress[key+'-'+k];
+    h+='<li><button type="button" data-act="'+key+'Go" data-i="'+k+'"'+(k===cur?' aria-current="step"':'')+' class="'+(dn?'done':'')+'"><span class="n" aria-hidden="true">'+(dn?'✓':(k+1))+'</span>'+esc(L(x.n))+(dn?'<span class="sr"> ('+esc(L({en:'done',bm:'selesai'}))+')</span>':'')+'</button></li>'; });
+  return h+'</ol>';
+}
+
+/* ---------- practice ---------- */
+var QUIZ = [
+ {q:{en:'In e-Pinjam, the copy with barcode PTSL-000123 is…',bm:'Dalam e-Pinjam, naskhah dengan kod bar PTSL-000123 ialah…'}, o:[{en:'a class',bm:'kelas'},{en:'an instance',bm:'tika'},{en:'an attribute',bm:'atribut'},{en:'a method',bm:'kaedah'}], a:1,
+  e:{en:'It is one specific, identifiable copy, so it is an instance of BookCopy.',bm:'Ia ialah satu naskhah khusus yang boleh dikenal pasti, jadi ia ialah tika bagi BookCopy.'}},
+ {q:{en:'Students pay RM0.20 a day and staff RM0.50, yet both respond to calculateFine(days). This is…',bm:'Pelajar membayar RM0.20 sehari dan staf RM0.50, tetapi kedua-duanya menjawab calculateFine(days). Ini ialah…'}, o:[{en:'encapsulation',bm:'pengkapsulan'},{en:'inheritance',bm:'pewarisan'},{en:'polymorphism',bm:'polimorfisme'},{en:'cardinality',bm:'kardinaliti'}], a:2,
+  e:{en:'One message, different behaviour depending on the receiver: polymorphism.',bm:'Satu mesej, tingkah laku berbeza bergantung pada penerima: polimorfisme.'}},
+ {q:{en:'The librarian cannot edit a copy’s status field directly and must send checkIn(). Which concept?',bm:'Pustakawan tidak boleh mengubah medan status naskhah secara langsung dan mesti menghantar checkIn(). Konsep apakah ini?'}, o:[{en:'encapsulation',bm:'pengkapsulan'},{en:'polymorphism',bm:'polimorfisme'},{en:'instantiation',bm:'penikaan'},{en:'system boundary',bm:'sempadan sistem'}], a:0,
+  e:{en:'Data is hidden inside the object and reached only through messages: encapsulation.',bm:'Data disembunyikan dalam objek dan hanya dicapai melalui mesej: pengkapsulan.'}},
+ {q:{en:'Student gets memberId and borrow() from Member without redefining them. This is…',bm:'Student mendapat memberId dan borrow() daripada Member tanpa mentakrif semula. Ini ialah…'}, o:[{en:'association',bm:'perkaitan'},{en:'inheritance',bm:'pewarisan'},{en:'a message',bm:'mesej'},{en:'a use case',bm:'kes guna'}], a:1,
+  e:{en:'A subclass inherits attributes and methods from its superclass.',bm:'Subkelas mewarisi atribut dan kaedah daripada superkelasnya.'}},
+ {q:{en:'Which is the best use case name?',bm:'Manakah nama kes guna yang terbaik?'}, o:[{en:'Loan table update',bm:'Kemas kini jadual pinjaman'},{en:'Click the borrow button',bm:'Klik butang pinjam'},{en:'Borrow item',bm:'Pinjam item'},{en:'Librarian',bm:'Pustakawan'}], a:2,
+  e:{en:'Use case names are verb + noun and describe the actor’s goal, not screens or tables.',bm:'Nama kes guna ialah kata kerja + kata nama dan menerangkan matlamat aktor, bukan skrin atau jadual.'}},
+ {q:{en:'Which diagram shows how a copy moves between Available, On loan and Overdue?',bm:'Rajah manakah yang menunjukkan bagaimana naskhah bergerak antara Tersedia, Dipinjam dan Lewat?'}, o:[{en:'Use case diagram',bm:'Rajah kes guna'},{en:'Sequence diagram',bm:'Rajah jujukan'},{en:'Class diagram',bm:'Rajah kelas'},{en:'State transition diagram',bm:'Rajah peralihan keadaan'}], a:3,
+  e:{en:'The life of one object across states is a state transition diagram.',bm:'Kitaran hayat satu objek merentas keadaan ialah rajah peralihan keadaan.'}},
+ {q:{en:'The correct cardinality from Book to BookCopy is…',bm:'Kardinaliti yang betul daripada Book kepada BookCopy ialah…'}, o:[{en:'1 to 1',bm:'1 kepada 1'},{en:'1 to 1..*',bm:'1 kepada 1..*'},{en:'1 to 0..1',bm:'1 kepada 0..1'},{en:'0..* to 1',bm:'0..* kepada 1'}], a:1,
+  e:{en:'A catalogued book has at least one physical copy, and may have many.',bm:'Buku yang dikatalogkan mempunyai sekurang-kurangnya satu naskhah fizikal, dan mungkin banyak.'}},
+ {q:{en:'In a sequence diagram, time runs…',bm:'Dalam rajah jujukan, masa bergerak…'}, o:[{en:'left to right',bm:'dari kiri ke kanan'},{en:'top to bottom',bm:'dari atas ke bawah'},{en:'bottom to top',bm:'dari bawah ke atas'},{en:'in no fixed direction',bm:'tanpa arah tetap'}], a:1,
+  e:{en:'Lifelines run downward; later messages appear lower.',bm:'Garis hayat bergerak ke bawah; mesej kemudian muncul lebih rendah.'}}
+];
+var MATCH = [
+ {k:{en:'Actor',bm:'Aktor'}, d:{en:'A role outside the system that interacts with it, such as the Payment gateway',bm:'Peranan di luar sistem yang berinteraksi dengannya, seperti Gerbang pembayaran'}},
+ {k:{en:'Use case',bm:'Kes guna'}, d:{en:'Steps an actor takes with the system to reach one goal',bm:'Langkah yang diambil aktor bersama sistem untuk mencapai satu matlamat'}},
+ {k:{en:'System boundary',bm:'Sempadan sistem'}, d:{en:'The rectangle separating e-Pinjam from its actors',bm:'Segi empat yang memisahkan e-Pinjam daripada aktornya'}},
+ {k:{en:'Lifeline',bm:'Garis hayat'}, d:{en:'A dashed line showing an object over time in a sequence diagram',bm:'Garis putus-putus yang menunjukkan objek sepanjang masa dalam rajah jujukan'}},
+ {k:{en:'Focus',bm:'Fokus'}, d:{en:'A narrow bar showing when an object is sending or receiving messages',bm:'Bar sempit yang menunjukkan bila objek menghantar atau menerima mesej'}},
+ {k:{en:'Cardinality',bm:'Kardinaliti'}, d:{en:'How many instances of one class relate to an instance of another',bm:'Bilangan tika satu kelas yang berkait dengan tika kelas lain'}}
+];
+var MATCH_ORDER=[3,0,5,1,4,2];
+var CARD = [
+ {q:{en:'One Member has ___ Loans',bm:'Seorang Member mempunyai ___ Loan'}, a:'0..*', e:{en:'A new member may have no loans; others have many.',bm:'Ahli baharu mungkin tiada pinjaman; yang lain mempunyai banyak.'}},
+ {q:{en:'One Loan covers ___ BookCopy',bm:'Satu Loan melibatkan ___ BookCopy'}, a:'1', e:{en:'Each loan record is for exactly one physical copy.',bm:'Setiap rekod pinjaman adalah untuk tepat satu naskhah fizikal.'}},
+ {q:{en:'One Book has ___ BookCopies',bm:'Satu Book mempunyai ___ BookCopy'}, a:'1..*', e:{en:'A catalogued book has at least one copy.',bm:'Buku yang dikatalogkan mempunyai sekurang-kurangnya satu naskhah.'}},
+ {q:{en:'One Member places ___ Reservations',bm:'Seorang Member membuat ___ Reservation'}, a:'0..*', e:{en:'Reserving is optional, and a member may reserve several items.',bm:'Menempah adalah pilihan, dan ahli boleh menempah beberapa item.'}},
+ {q:{en:'One Loan has ___ unpaid Fine',bm:'Satu Loan mempunyai ___ Fine tertunggak'}, a:'0..1', e:{en:'Only an overdue loan produces a fine, and at most one per loan.',bm:'Hanya pinjaman lewat menghasilkan denda, dan paling banyak satu bagi setiap pinjaman.'}}
+];
+var ORDER = [
+ {en:'Librarian sends checkStatus() to Member',bm:'Pustakawan menghantar checkStatus() kepada Member'},
+ {en:'Member replies: status OK (no fines over RM10)',bm:'Member membalas: status OK (tiada denda melebihi RM10)'},
+ {en:'Librarian sends checkOut(member) to BookCopy',bm:'Pustakawan menghantar checkOut(member) kepada BookCopy'},
+ {en:'BookCopy creates a new Loan with a due date',bm:'BookCopy mencipta Loan baharu dengan tarikh akhir'},
+ {en:'Loan sends addLoan(loan) to Member',bm:'Loan menghantar addLoan(loan) kepada Member'},
+ {en:'BookCopy returns the due date slip to the Librarian',bm:'BookCopy memulangkan slip tarikh akhir kepada Pustakawan'}
+];
+var DIAG = [{en:'Use case diagram',bm:'Rajah kes guna'},{en:'Class diagram',bm:'Rajah kelas'},{en:'Sequence diagram',bm:'Rajah jujukan'},{en:'State transition diagram',bm:'Rajah peralihan keadaan'},{en:'Activity diagram',bm:'Rajah aktiviti'}];
+var WHICH = [
+ {q:{en:'Show which actors use e-Pinjam and for which goals',bm:'Tunjukkan aktor yang menggunakan e-Pinjam dan matlamat mereka'}, a:0},
+ {q:{en:'Show the order of messages when a member pays a fine online',bm:'Tunjukkan susunan mesej apabila ahli membayar denda dalam talian'}, a:2},
+ {q:{en:'Show the steps and decisions when an item is returned',bm:'Tunjukkan langkah dan keputusan apabila item dipulangkan'}, a:4},
+ {q:{en:'Show the life of a Reservation from placed to collected or expired',bm:'Tunjukkan kitaran hayat Reservation daripada dibuat hingga diambil atau tamat'}, a:3},
+ {q:{en:'Show the classes and how many loans one member can have',bm:'Tunjukkan kelas dan berapa banyak pinjaman yang boleh dimiliki seorang ahli'}, a:1}
+];
+var PRACTICE = [
+ {n:{en:'Concept quiz',bm:'Kuiz konsep'}, key:'quiz'},
+ {n:{en:'Match the terms',bm:'Padankan istilah'}, key:'match'},
+ {n:{en:'Cardinality',bm:'Kardinaliti'}, key:'card'},
+ {n:{en:'Order the messages',bm:'Susun mesej'}, key:'order'},
+ {n:{en:'Pick the diagram',bm:'Pilih rajah'}, key:'which'}
+];
+function fbBox(ok, text){ return '<div class="fb '+(ok?'ok':'no')+'"><b class="'+(ok?'ok':'no')+'">'+(ok?'✓ '+esc(t('correct')):'✗ '+esc(t('notQuite')))+'.</b> '+esc(text)+'</div>'; }
+function scoreLine(n,tot){ return '<p class="score" role="status">'+esc(t('score'))+': '+n+' / '+tot+'</p>'; }
+function practiceHTML(){
+  var i=S.practice, h='';
+  h+='<h2 tabindex="-1" id="pageH">'+esc(L({en:'Practice',bm:'Latihan'}))+'</h2>';
+  h+='<p class="lede">'+esc(L({en:'Five activities based on e-Pinjam. Answer, check, and read the explanation for every item.',bm:'Lima aktiviti berdasarkan e-Pinjam. Jawab, semak, dan baca penerangan bagi setiap item.'}))+'</p>';
+  h+=stepper(PRACTICE,i,'practice');
+  h+='<section aria-labelledby="stepH"><h3 id="stepH">'+(i+1)+'. '+esc(L(PRACTICE[i].n))+'</h3>';
+  if(i===0){
+    var sc=0;
+    QUIZ.forEach(function(q,k){ var ch=S.quiz[k];
+      h+='<div class="q"><fieldset><legend>'+(k+1)+'. '+esc(L(q.q))+'</legend>';
+      q.o.forEach(function(o,j){ h+='<label class="opt"><input type="radio" name="q'+k+'" value="'+j+'" data-act="quizpick" data-k="'+k+'"'+(ch===j?' checked':'')+(S.quizChecked?' disabled':'')+'><span>'+esc(L(o))+'</span></label>'; });
+      h+='</fieldset>';
+      if(S.quizChecked){ var ok=ch===q.a; if(ok) sc++; h+=fbBox(ok, (ok?'':L({en:'Answer: ',bm:'Jawapan: '})+L(q.o[q.a])+'. ')+L(q.e)); }
+      h+='</div>'; });
+    h+=checkRow('quiz', S.quizChecked, sc, QUIZ.length);
+  }
+  if(i===1){
+    var sc1=0;
+    h+='<p>'+esc(L({en:'Choose the term that matches each description.',bm:'Pilih istilah yang sepadan dengan setiap penerangan.'}))+'</p>';
+    MATCH_ORDER.forEach(function(idx,row){ var sel=S.match[idx];
+      h+='<div class="mrow"><select id="m'+idx+'" data-act="matchpick" data-k="'+idx+'" aria-label="'+esc(L({en:'Term for: ',bm:'Istilah bagi: '})+L(MATCH[idx].d))+'"'+(S.matchChecked?' disabled':'')+'><option value="">'+esc(t('choose'))+'</option>';
+      MATCH.forEach(function(m,j){ h+='<option value="'+j+'"'+(sel===j?' selected':'')+'>'+esc(L(m.k))+'</option>'; });
+      h+='</select><div>'+esc(L(MATCH[idx].d))+'</div></div>';
+      if(S.matchChecked){ var ok=sel===idx; if(ok) sc1++; h+=fbBox(ok, ok? L(MATCH[idx].k) : L({en:'Answer: ',bm:'Jawapan: '})+L(MATCH[idx].k)); }
+    });
+    h+=checkRow('match', S.matchChecked, sc1, MATCH.length);
+  }
+  if(i===2){
+    var sc2=0, opts=['0..*','0..1','1','1..*'];
+    h+='<p>'+esc(L({en:'Use the e-Pinjam business rules to fill each gap.',bm:'Gunakan peraturan perniagaan e-Pinjam untuk mengisi setiap ruang.'}))+'</p>';
+    CARD.forEach(function(c,k){ var sel=S.card[k];
+      h+='<div class="q"><fieldset><legend>'+(k+1)+'. '+esc(L(c.q))+'</legend><div class="row">';
+      opts.forEach(function(o){ h+='<label class="opt"><input type="radio" name="c'+k+'" value="'+o+'" data-act="cardpick" data-k="'+k+'"'+(sel===o?' checked':'')+(S.cardChecked?' disabled':'')+'><span><code>'+o+'</code></span></label>'; });
+      h+='</div></fieldset>';
+      if(S.cardChecked){ var ok=sel===c.a; if(ok) sc2++; h+=fbBox(ok,(ok?'':L({en:'Answer: ',bm:'Jawapan: '})+c.a+'. ')+L(c.e)); }
+      h+='</div>'; });
+    h+=checkRow('card', S.cardChecked, sc2, CARD.length);
+  }
+  if(i===3){
+    if(!S.order) S.order=[3,0,5,2,1,4];
+    var sc3=0;
+    h+='<p>'+esc(L({en:'Put the messages for Borrow item in the order they happen. Use the Move up and Move down buttons.',bm:'Susun mesej bagi Pinjam item mengikut urutan berlakunya. Gunakan butang Naik dan Turun.'}))+'</p><ol class="order">';
+    S.order.forEach(function(idx,pos){ var ok=S.orderChecked && idx===pos; if(ok) sc3++;
+      h+='<li><span class="pos" aria-hidden="true">'+(pos+1)+'</span><span class="txt">'+esc(L(ORDER[idx]))+(S.orderChecked?' <b class="'+(ok?'tag ok':'tag no')+'">'+(ok?'✓':'✗')+'</b><span class="sr">'+(ok?t('correct'):t('notQuite'))+'</span>':'')+'</span><span class="mv">'+
+        '<button type="button" class="btn ghost sm" data-act="mv" data-p="'+pos+'" data-d="-1" aria-label="'+esc(t('up')+': '+L(ORDER[idx]))+'"'+(pos===0||S.orderChecked?' disabled':'')+'>↑</button>'+
+        '<button type="button" class="btn ghost sm" data-act="mv" data-p="'+pos+'" data-d="1" aria-label="'+esc(t('down')+': '+L(ORDER[idx]))+'"'+(pos===S.order.length-1||S.orderChecked?' disabled':'')+'>↓</button></span></li>'; });
+    h+='</ol>';
+    if(S.orderChecked && sc3<ORDER.length) h+=fbBox(false, L({en:'Tip: the member’s status must be checked before anything is checked out, and the Loan must exist before it can be added to the member.',bm:'Petua: status ahli mesti disemak sebelum apa-apa dipinjam, dan Loan mesti wujud sebelum ia boleh ditambah kepada ahli.'}));
+    h+=checkRow('order', S.orderChecked, sc3, ORDER.length);
+  }
+  if(i===4){
+    var sc4=0;
+    WHICH.forEach(function(w,k){ var sel=S.which[k];
+      h+='<div class="q"><label class="f" for="w'+k+'">'+(k+1)+'. '+esc(L(w.q))+'</label><select id="w'+k+'" data-act="whichpick" data-k="'+k+'"'+(S.whichChecked?' disabled':'')+'><option value="">'+esc(t('choose'))+'</option>';
+      DIAG.forEach(function(d,j){ h+='<option value="'+j+'"'+(sel===j?' selected':'')+'>'+esc(L(d))+'</option>'; });
+      h+='</select>';
+      if(S.whichChecked){ var ok=sel===w.a; if(ok) sc4++; h+=fbBox(ok, ok? L(DIAG[w.a]) : L({en:'Answer: ',bm:'Jawapan: '})+L(DIAG[w.a])); }
+      h+='</div>'; });
+    h+=checkRow('which', S.whichChecked, sc4, WHICH.length);
+  }
+  h+='</section><div class="pager">'+(i>0?'<button type="button" class="btn ghost" data-act="practiceGo" data-i="'+(i-1)+'">'+esc(t('prev'))+'</button>':'<span></span>')+
+     (i<4?'<button type="button" class="btn" data-act="practiceGo" data-i="'+(i+1)+'">'+esc(t('next'))+': '+esc(L(PRACTICE[i+1].n))+'</button>':'<button type="button" class="btn" data-act="tab" data-tab="builder">'+esc(L({en:'Go to Builder',bm:'Pergi ke Pembina'}))+'</button>')+'</div>';
+  return h;
+}
+function checkRow(key, checked, sc, tot){
+  if(checked){ if(!S.progress[key]) { S.progress[key]=true; save(); setTimeout(renderTabs,0); }
+    return scoreLine(sc,tot)+'<div class="row"><button type="button" class="btn sec" data-act="retry" data-k="'+key+'">'+esc(t('reset'))+'</button></div>'; }
+  return '<div class="row"><button type="button" class="btn" data-act="check" data-k="'+key+'">'+esc(t('check'))+'</button></div>';
+}
+
+/* ---------- builder ---------- */
+var BUILD = [{n:{en:'Class diagram builder',bm:'Pembina rajah kelas'}},{n:{en:'Use case description builder',bm:'Pembina perihalan kes guna'}}];
+function starter(){ return {classes:[{id:'c1',name:'Member',attrs:['memberId','name'],methods:['borrow()'],x:40,y:40},{id:'c2',name:'Book',attrs:['isbn','title'],methods:[],x:360,y:40}],rels:[]}; }
+function uid(){ return 'c'+Date.now().toString(36)+Math.floor(Math.random()*1000); }
+function lines(s){ return String(s||'').split('\n').map(function(x){return x.trim();}).filter(Boolean); }
+var editId=null;
+function builderHTML(){
+  if(!S.model) S.model=starter();
+  var i=S.builder, h='';
+  h+='<h2 tabindex="-1" id="pageH">'+esc(L({en:'Builder',bm:'Pembina'}))+'</h2>';
+  h+='<p class="lede">'+esc(L({en:'Model e-Pinjam yourself. Your work is saved in this browser as you go.',bm:'Modelkan e-Pinjam sendiri. Kerja anda disimpan dalam pelayar ini secara automatik.'}))+'</p>';
+  h+=stepper(BUILD,i,'builderStep');
+  if(i===0) h+=classBuilderHTML(); else h+=ucBuilderHTML();
+  return h;
+}
+function classBuilderHTML(){
+  var M=S.model, ed=editId? M.classes.filter(function(c){return c.id===editId;})[0] : null, h='';
+  h+='<section aria-labelledby="stepH"><h3 id="stepH">1. '+esc(L(BUILD[0].n))+'</h3>';
+  h+='<p>'+esc(L({en:'Add classes and relationships for e-Pinjam. Drag boxes to arrange them, or focus a box and use the arrow keys. When you are ready, check your model against the case.',bm:'Tambah kelas dan hubungan untuk e-Pinjam. Seret kotak untuk menyusun, atau fokus pada kotak dan gunakan kekunci anak panah. Apabila sedia, semak model anda dengan kes.'}))+'</p>';
+  h+='<div class="bld"><div style="display:grid;gap:16px">';
+  h+='<form class="panel form" data-form="cls"><h4 style="margin-top:0">'+esc(ed?L({en:'Edit class',bm:'Sunting kelas'}):L({en:'Add a class',bm:'Tambah kelas'}))+'</h4>';
+  h+='<label class="f">'+esc(L({en:'Class name',bm:'Nama kelas'}))+' <span class="hint">'+esc(L({en:'singular noun, e.g. Loan',bm:'kata nama tunggal, cth. Loan'}))+'</span><input type="text" name="name" required value="'+esc(ed?ed.name:'')+'" autocomplete="off"></label>';
+  h+='<label class="f">'+esc(L({en:'Attributes',bm:'Atribut'}))+' <span class="hint">'+esc(L({en:'one per line',bm:'satu setiap baris'}))+'</span><textarea name="attrs">'+esc(ed?ed.attrs.join('\n'):'')+'</textarea></label>';
+  h+='<label class="f">'+esc(L({en:'Methods',bm:'Kaedah'}))+' <span class="hint">'+esc(L({en:'one per line, e.g. renew()',bm:'satu setiap baris, cth. renew()'}))+'</span><textarea name="methods">'+esc(ed?ed.methods.join('\n'):'')+'</textarea></label>';
+  h+='<div class="row"><button class="btn" type="submit">'+esc(ed?L({en:'Save class',bm:'Simpan kelas'}):L({en:'Add class',bm:'Tambah kelas'}))+'</button>'+(ed?'<button class="btn ghost" type="button" data-act="canceledit">'+esc(L({en:'Cancel',bm:'Batal'}))+'</button>':'')+'</div></form>';
+  h+='<div class="panel"><h4 style="margin-top:0">'+esc(L({en:'Classes',bm:'Kelas'}))+' ('+M.classes.length+')</h4><ul class="items">';
+  M.classes.forEach(function(c){ h+='<li><span>'+esc(c.name)+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button type="button" class="btn ghost sm" data-act="editcls" data-id="'+esc(c.id)+'" aria-label="'+esc(L({en:'Edit ',bm:'Sunting '})+c.name)+'">'+esc(L({en:'Edit',bm:'Sunting'}))+'</button><button type="button" class="btn ghost sm" data-act="delcls" data-id="'+esc(c.id)+'" aria-label="'+esc(L({en:'Delete ',bm:'Padam '})+c.name)+'">'+esc(L({en:'Delete',bm:'Padam'}))+'</button></span></li>'; });
+  h+='</ul></div>';
+  var copt=M.classes.map(function(c){ return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'; }).join('');
+  var mopt='<option value="">—</option>'+['1','0..1','0..*','1..*'].map(function(x){return '<option>'+x+'</option>';}).join('');
+  h+='<form class="panel form" data-form="rel"><h4 style="margin-top:0">'+esc(L({en:'Add a relationship',bm:'Tambah hubungan'}))+'</h4>';
+  h+='<label class="f">'+esc(L({en:'Type',bm:'Jenis'}))+'<select name="kind"><option value="assoc">'+esc(L({en:'Association',bm:'Perkaitan'}))+'</option><option value="inherit">'+esc(L({en:'Inheritance (from subclass to superclass)',bm:'Pewarisan (daripada subkelas kepada superkelas)'}))+'</option></select></label>';
+  h+='<div class="grid2" style="gap:12px"><label class="f">'+esc(L({en:'From',bm:'Dari'}))+'<select name="from">'+copt+'</select></label><label class="f">'+esc(L({en:'To',bm:'Ke'}))+'<select name="to">'+copt+'</select></label></div>';
+  h+='<div class="grid2" style="gap:12px"><label class="f">'+esc(L({en:'Cardinality at From',bm:'Kardinaliti di Dari'}))+'<select name="m1">'+mopt+'</select></label><label class="f">'+esc(L({en:'Cardinality at To',bm:'Kardinaliti di Ke'}))+'<select name="m2">'+mopt+'</select></label></div>';
+  h+='<label class="f">'+esc(L({en:'Label (optional)',bm:'Label (pilihan)'}))+'<input type="text" name="label" autocomplete="off" placeholder="has"></label>';
+  h+='<div class="row"><button class="btn" type="submit"'+(M.classes.length<2?' disabled':'')+'>'+esc(L({en:'Add relationship',bm:'Tambah hubungan'}))+'</button></div>';
+  h+='<ul class="items">';
+  M.rels.forEach(function(r,k){ var a=M.classes.filter(function(c){return c.id===r.from;})[0], b=M.classes.filter(function(c){return c.id===r.to;})[0]; if(!a||!b) return;
+    var d= r.kind==='inherit' ? a.name+' ▷ '+b.name : a.name+' '+(r.m1||'')+' — '+(r.m2||'')+' '+b.name+(r.label?' ('+r.label+')':'');
+    h+='<li><span>'+esc(d)+'</span><button type="button" class="btn ghost sm" data-act="delrel" data-i="'+k+'" aria-label="'+esc(L({en:'Delete relationship ',bm:'Padam hubungan '})+d)+'">'+esc(L({en:'Delete',bm:'Padam'}))+'</button></li>'; });
+  h+='</ul></form>';
+  h+='<div class="panel"><div class="row"><button type="button" class="btn ghost sm" data-act="starter">'+esc(L({en:'Load starter',bm:'Muat permulaan'}))+'</button><button type="button" class="btn ghost sm" data-act="answer">'+esc(L({en:'Show model answer',bm:'Tunjuk jawapan model'}))+'</button><button type="button" class="btn ghost sm" data-act="clear">'+esc(L({en:'Clear all',bm:'Kosongkan semua'}))+'</button></div></div>';
+  h+='</div><div style="display:grid;gap:16px;min-width:0">';
+  h+='<div class="dgwrap canvas" id="canvas">'+classSVG(M,true,L({en:'Your class diagram',bm:'Rajah kelas anda'}))+'</div>';
+  h+='<div class="row"><button type="button" class="btn" data-act="checkmodel">'+esc(L({en:'Check my model',bm:'Semak model saya'}))+'</button><button type="button" class="btn sec" data-act="copyuml">'+esc(L({en:'Copy as PlantUML',bm:'Salin sebagai PlantUML'}))+'</button></div>';
+  if(S.checkResult){ var R=S.checkResult, okc=R.filter(function(x){return x.ok;}).length;
+    h+='<div class="panel"><p class="score" role="status">'+esc(L({en:'Checks passed',bm:'Semakan lulus'}))+': '+okc+' / '+R.length+'</p><ul class="results">';
+    R.forEach(function(x){ h+='<li class="'+(x.ok?'ok':'no')+'"><span class="ic" aria-hidden="true">'+(x.ok?'✓':'!')+'</span><span><span class="sr">'+(x.ok?t('correct'):t('notQuite'))+': </span>'+esc(x.t)+'</span></li>'; });
+    h+='</ul></div>'; }
+  h+='<details class="alt"><summary>PlantUML</summary><pre class="code" id="puml" tabindex="0">'+esc(toPlant(M))+'</pre></details>';
+  h+='</div></div></section>';
+  h+='<div class="pager"><span></span><button type="button" class="btn" data-act="builderStepGo" data-i="1">'+esc(t('next'))+': '+esc(L(BUILD[1].n))+'</button></div>';
+  return h;
+}
+function toPlant(M){
+  function nm(s){ return String(s).replace(/[^A-Za-z0-9_]/g,'_')||'Class'; }
+  var o='@startuml\n';
+  M.classes.forEach(function(c){ o+='class '+nm(c.name)+' {\n'; c.attrs.forEach(function(a){ o+='  '+a+'\n'; }); c.methods.forEach(function(m){ o+='  '+m+'\n'; }); o+='}\n'; });
+  M.rels.forEach(function(r){ var a=M.classes.filter(function(c){return c.id===r.from;})[0], b=M.classes.filter(function(c){return c.id===r.to;})[0]; if(!a||!b) return;
+    if(r.kind==='inherit') o+=nm(a.name)+' --|> '+nm(b.name)+'\n';
+    else o+=nm(a.name)+(r.m1?' "'+r.m1+'"':'')+' --'+(r.m2?' "'+r.m2+'"':'')+' '+nm(b.name)+(r.label?' : '+r.label:'')+'\n'; });
+  return o+'@enduml';
+}
+function checkModel(){
+  var M=S.model, R=[];
+  function norm(s){ return String(s).toLowerCase().replace(/[^a-z]/g,''); }
+  var syn={ member:['member','ahli','borrower','patron'], student:['student','pelajar'], staff:['staff','staf','lecturer'], book:['book','buku','title','judul','catalogueitem'],
+    copy:['bookcopy','copy','naskhah','item','bookitem','physicalcopy'], loan:['loan','pinjaman','borrowing'], reservation:['reservation','tempahan','hold','booking'] };
+  var names={member:{en:'Member',bm:'Member (Ahli)'},student:{en:'Student',bm:'Student (Pelajar)'},staff:{en:'Staff',bm:'Staff (Staf)'},book:{en:'Book',bm:'Book (Buku)'},copy:{en:'BookCopy',bm:'BookCopy (Naskhah)'},loan:{en:'Loan',bm:'Loan (Pinjaman)'},reservation:{en:'Reservation',bm:'Reservation (Tempahan)'}};
+  var id={};
+  Object.keys(syn).forEach(function(k){ var c=M.classes.filter(function(c){ return syn[k].indexOf(norm(c.name))>=0; })[0]; id[k]=c?c.id:null;
+    R.push({ok:!!c, t: c? L({en:'Class found: ',bm:'Kelas ditemui: '})+c.name : L({en:'Missing class: ',bm:'Kelas tiada: '})+L(names[k])+'. '+L(HINT[k])}); });
+  function rel(a,b,kind){ var out=null; M.rels.forEach(function(r){ if(kind==='inherit'){ if(r.kind==='inherit'&&r.from===a&&r.to===b) out={}; } else if(r.kind!=='inherit'){ if(r.from===a&&r.to===b) out={ma:r.m1,mb:r.m2}; else if(r.from===b&&r.to===a) out={ma:r.m2,mb:r.m1}; } }); return out; }
+  if(id.student&&id.member){ var r1x=rel(id.student,id.member,'inherit'); R.push({ok:!!r1x,t: r1x? L({en:'Student inherits from Member',bm:'Student mewarisi Member'}) : L({en:'Add inheritance from Student to Member: a student is a member.',bm:'Tambah pewarisan daripada Student kepada Member: pelajar ialah ahli.'})}); }
+  if(id.staff&&id.member){ var r2=rel(id.staff,id.member,'inherit'); R.push({ok:!!r2,t: r2? L({en:'Staff inherits from Member',bm:'Staff mewarisi Member'}) : L({en:'Add inheritance from Staff to Member: a staff member is a member.',bm:'Tambah pewarisan daripada Staff kepada Member: staf ialah ahli.'})}); }
+  if(id.member&&id.loan){ var r3=rel(id.member,id.loan); var ok3=r3 && r3.ma==='1' && (r3.mb==='0..*');
+    R.push({ok:!!ok3,t: ok3? L({en:'Member 1 to 0..* Loan is correct',bm:'Member 1 kepada 0..* Loan adalah betul'}) : r3? L({en:'Member–Loan exists; check cardinality. One member has zero or many loans (1 to 0..*).',bm:'Member–Loan wujud; semak kardinaliti. Seorang ahli mempunyai sifar atau banyak pinjaman (1 kepada 0..*).'}) : L({en:'Link Member and Loan: a member has loans.',bm:'Hubungkan Member dan Loan: ahli mempunyai pinjaman.'})}); }
+  if(id.book&&id.copy){ var r4=rel(id.book,id.copy); var ok4=r4 && r4.ma==='1' && r4.mb==='1..*';
+    R.push({ok:!!ok4,t: ok4? L({en:'Book 1 to 1..* BookCopy is correct',bm:'Book 1 kepada 1..* BookCopy adalah betul'}) : r4? L({en:'Book–BookCopy exists; one book has one or many copies (1 to 1..*).',bm:'Book–BookCopy wujud; satu buku mempunyai satu atau banyak naskhah (1 kepada 1..*).'}) : L({en:'Link Book and BookCopy: one title, many copies.',bm:'Hubungkan Book dan BookCopy: satu judul, banyak naskhah.'})}); }
+  if(id.loan&&id.copy){ var r5=rel(id.loan,id.copy); var ok5=r5 && r5.mb==='1';
+    R.push({ok:!!ok5,t: ok5? L({en:'Each Loan covers exactly 1 BookCopy',bm:'Setiap Loan melibatkan tepat 1 BookCopy'}) : r5? L({en:'Loan–BookCopy exists; each loan covers exactly one copy (1 at the BookCopy end).',bm:'Loan–BookCopy wujud; setiap pinjaman melibatkan tepat satu naskhah (1 di hujung BookCopy).'}) : L({en:'Link Loan and BookCopy: the copy is what is borrowed.',bm:'Hubungkan Loan dan BookCopy: naskhah itulah yang dipinjam.'})}); }
+  if(id.member&&id.reservation){ var r6=rel(id.member,id.reservation); R.push({ok:!!r6,t: r6? L({en:'Member is linked to Reservation',bm:'Member dihubungkan kepada Reservation'}) : L({en:'Link Member and Reservation: members place reservations.',bm:'Hubungkan Member dan Reservation: ahli membuat tempahan.'})}); }
+  var noAttr=M.classes.filter(function(c){return !c.attrs.length;}).map(function(c){return c.name;});
+  R.push({ok:!noAttr.length,t: noAttr.length? L({en:'Give these classes at least one attribute: ',bm:'Berikan sekurang-kurangnya satu atribut kepada kelas ini: '})+noAttr.join(', ') : L({en:'Every class has attributes',bm:'Setiap kelas mempunyai atribut'})});
+  var plural=M.classes.filter(function(c){ return /[a-z]s$/i.test(c.name) && !/(ss|us|is)$/i.test(c.name); }).map(function(c){return c.name;});
+  if(plural.length) R.push({ok:false,t:L({en:'Class names should be singular: ',bm:'Nama kelas sepatutnya tunggal: '})+plural.join(', ')});
+  S.checkResult=R;
+  var okc=R.filter(function(x){return x.ok;}).length;
+  if(okc/R.length>=0.8) done('builder-class');
+  announce(L({en:'Checks passed: ',bm:'Semakan lulus: '})+okc+' / '+R.length);
+}
+var HINT={ member:{en:'Every borrower is a Member.',bm:'Setiap peminjam ialah Member.'}, student:{en:'Students have their own loan limit and fine rate.',bm:'Pelajar mempunyai had pinjaman dan kadar denda sendiri.'}, staff:{en:'Staff have different limits from students.',bm:'Staf mempunyai had berbeza daripada pelajar.'},
+  book:{en:'The catalogue describes titles (ISBN, author).',bm:'Katalog menerangkan judul (ISBN, pengarang).'}, copy:{en:'Each physical copy has its own barcode and status.',bm:'Setiap naskhah fizikal mempunyai kod bar dan status sendiri.'},
+  loan:{en:'A loan records who borrowed which copy, and when it is due.',bm:'Pinjaman merekod siapa meminjam naskhah mana, dan bila tarikh akhirnya.'}, reservation:{en:'Members can reserve items that are on loan.',bm:'Ahli boleh menempah item yang sedang dipinjam.'} };
+
+var UCF=[['name',{en:'Use case name',bm:'Nama kes guna'},{en:'verb + noun, e.g. Renew loan',bm:'kata kerja + kata nama, cth. Perbaharui pinjaman'}],['actor',{en:'Actor',bm:'Aktor'},null],['desc',{en:'Description',bm:'Penerangan'},null],['pre',{en:'Precondition',bm:'Prasyarat'},{en:'true before it starts',bm:'benar sebelum bermula'}],
+ ['steps',{en:'Successful completion',bm:'Penyelesaian berjaya'},{en:'one step per line',bm:'satu langkah setiap baris'}],['alt',{en:'Alternative',bm:'Alternatif'},{en:'what happens when something goes differently',bm:'apa berlaku jika sesuatu berbeza'}],['post',{en:'Postcondition',bm:'Pascasyarat'},{en:'true after it ends',bm:'benar selepas tamat'}],['assume',{en:'Assumptions',bm:'Andaian'},null]];
+function ucChecks(){ var u=S.uc, w=u.name.trim().split(/\s+/).filter(Boolean).length;
+  return [
+   {ok:w>=2&&w<=5, t:L({en:'Name is a short verb + noun phrase (2–5 words)',bm:'Nama ialah frasa kata kerja + kata nama yang ringkas (2–5 perkataan)'})},
+   {ok:!!u.actor.trim(), t:L({en:'An actor is named',bm:'Aktor dinamakan'})},
+   {ok:!!u.pre.trim(), t:L({en:'Precondition is stated',bm:'Prasyarat dinyatakan'})},
+   {ok:lines(u.steps).length>=3, t:L({en:'At least three steps in the successful path',bm:'Sekurang-kurangnya tiga langkah dalam laluan berjaya'})},
+   {ok:!!u.alt.trim(), t:L({en:'An alternative path is described',bm:'Laluan alternatif diterangkan'})},
+   {ok:!!u.post.trim(), t:L({en:'Postcondition is stated',bm:'Pascasyarat dinyatakan'})}
+  ]; }
+function ucBuilderHTML(){
+  var u=S.uc, h='';
+  h+='<section aria-labelledby="stepH"><h3 id="stepH">2. '+esc(L(BUILD[1].n))+'</h3>';
+  h+='<p>'+esc(L({en:'Write the full description for one e-Pinjam use case. The preview updates as you type; check it when you are done.',bm:'Tulis perihalan penuh bagi satu kes guna e-Pinjam. Pratonton dikemas kini semasa anda menaip; semak apabila selesai.'}))+'</p>';
+  h+='<div class="bld"><form class="panel form" data-form="uc">';
+  UCF.forEach(function(f){ var big=(f[0]==='steps'||f[0]==='alt');
+    h+='<label class="f">'+esc(L(f[1]))+(f[2]?' <span class="hint">'+esc(L(f[2]))+'</span>':'')+(big?'<textarea name="'+f[0]+'" data-act="ucin">'+esc(u[f[0]])+'</textarea>':'<input type="text" name="'+f[0]+'" data-act="ucin" value="'+esc(u[f[0]])+'" autocomplete="off">')+'</label>'; });
+  h+='<div class="row"><button type="button" class="btn" data-act="uccheck">'+esc(L({en:'Check description',bm:'Semak perihalan'}))+'</button><button type="button" class="btn ghost" data-act="ucexample">'+esc(L({en:'Load example',bm:'Muat contoh'}))+'</button><button type="button" class="btn ghost" data-act="ucclear">'+esc(L({en:'Clear',bm:'Kosongkan'}))+'</button></div></form>';
+  h+='<div style="display:grid;gap:16px;min-width:0"><div id="ucPrev">'+ucPreview()+'</div><div id="ucRes">'+ucResults()+'</div><div class="row"><button type="button" class="btn sec" data-act="uccopy">'+esc(L({en:'Copy as text',bm:'Salin sebagai teks'}))+'</button></div></div></div></section>';
+  h+='<div class="pager"><button type="button" class="btn ghost" data-act="builderStepGo" data-i="0">'+esc(t('prev'))+': '+esc(L(BUILD[0].n))+'</button><span></span></div>';
+  return h;
+}
+function ucPreview(){ var u=S.uc, h='<div class="tbl-wrap"><table class="ucprev"><caption class="sr">'+esc(L({en:'Use case description preview',bm:'Pratonton perihalan kes guna'}))+'</caption>';
+  UCF.forEach(function(f){ var v=u[f[0]]; var cell = (f[0]==='steps'||f[0]==='alt') && lines(v).length ? '<ol class="steps" style="margin:0">'+lines(v).map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>' : (v.trim()? esc(v) : '<span class="muted">—</span>');
+    h+='<tr><th scope="row">'+esc(L(f[1]))+'</th><td>'+cell+'</td></tr>'; });
+  return h+'</table></div>'; }
+function ucResults(){ if(!S.ucChecked) return ''; var R=ucChecks(), ok=R.filter(function(x){return x.ok;}).length;
+  var h='<div class="panel"><p class="score" role="status">'+esc(L({en:'Checks passed',bm:'Semakan lulus'}))+': '+ok+' / '+R.length+'</p><ul class="results">';
+  R.forEach(function(x){ h+='<li class="'+(x.ok?'ok':'no')+'"><span class="ic" aria-hidden="true">'+(x.ok?'✓':'!')+'</span><span><span class="sr">'+(x.ok?t('correct'):t('notQuite'))+': </span>'+esc(x.t)+'</span></li>'; });
+  return h+'</ul></div>'; }
+function ucText(){ var u=S.uc; return UCF.map(function(f){ var v=u[f[0]]; if(f[0]==='steps'||f[0]==='alt') v=lines(v).map(function(x,i){return '  '+(i+1)+'. '+x;}).join('\n'); return L(f[1])+':'+((f[0]==='steps'||f[0]==='alt')?'\n':' ')+v; }).join('\n'); }
+var UCEX={ en:{name:'Renew loan',actor:'Member',desc:'Extends the due date of an item the member has on loan',pre:'Member is logged in and has the item on loan',steps:'Member selects the loan to renew\nSystem checks the copy is not reserved or overdue\nSystem checks renewals are fewer than 2\nSystem sets a new due date and shows it',alt:'Copy is reserved, overdue or already renewed twice\nSystem explains why the renewal is refused',post:'Loan has a new due date and renewals increases by 1',assume:'None'},
+ bm:{name:'Perbaharui pinjaman',actor:'Ahli',desc:'Melanjutkan tarikh akhir item yang sedang dipinjam oleh ahli',pre:'Ahli telah log masuk dan sedang meminjam item tersebut',steps:'Ahli memilih pinjaman untuk diperbaharui\nSistem menyemak naskhah tidak ditempah atau lewat\nSistem menyemak pembaharuan kurang daripada 2 kali\nSistem menetapkan tarikh akhir baharu dan memaparkannya',alt:'Naskhah ditempah, lewat atau sudah diperbaharui dua kali\nSistem menerangkan sebab pembaharuan ditolak',post:'Pinjaman mempunyai tarikh akhir baharu dan bilangan pembaharuan bertambah 1',assume:'Tiada'} };
+
+/* ---------- case ---------- */
+function caseHTML(){
+  var h='<div class="catcard"><div class="callno"><span>'+esc(L(CASE.call))+'</span><span>'+esc(L(CASE.kind))+'</span></div>';
+  h+='<h2 tabindex="-1" id="pageH">'+esc(L(CASE.title))+'</h2><p class="lede">'+esc(L(CASE.lede))+'</p><p class="muted" style="margin:0">'+esc(L(CASE.disclaimer))+'</p></div>';
+  h+=listenBtns('caseBody')+'<div id="caseBody">';
+  h+='<h3>'+esc(L(CASE.bgH))+'</h3><p>'+esc(L(CASE.bg))+'</p>';
+  h+='<h3>'+esc(L(CASE.actorsH))+'</h3><div class="actors">';
+  CASE.actors.forEach(function(a){ h+='<div class="actor"><b>'+esc(L(a.n))+'</b>'+esc(L(a.d))+'</div>'; });
+  h+='</div><h3>'+esc(L(CASE.rulesH))+'</h3><div class="tbl-wrap"><table><thead><tr>'+CASE.rulesHead.map(function(x){return '<th scope="col">'+esc(L(x))+'</th>';}).join('')+'</tr></thead><tbody>';
+  CASE.rules.forEach(function(r){ h+='<tr><th scope="row">'+esc(L(r[0]))+'</th><td>'+esc(L(r[1]))+'</td><td>'+esc(L(r[2]))+'</td></tr>'; });
+  h+='</tbody></table></div>';
+  h+='<h3>'+esc(L(CASE.copyH))+'</h3><p class="note">'+esc(L(CASE.copy))+'</p>';
+  h+='<h3>'+esc(L(CASE.reqH))+'</h3><ul>'+CASE.reqs.map(function(x){return '<li>'+esc(L(x))+'</li>';}).join('')+'</ul>';
+  h+='<h3>'+esc(L(CASE.newH))+'</h3><ul>'+CASE.news.map(function(x){return '<li>'+esc(L(x))+'</li>';}).join('')+'</ul><div class="row"><button type="button" class="btn sec" data-act="tab" data-tab="simulate">'+esc(L({en:'Open Simulations',bm:'Buka Simulasi'}))+'</button></div>';
+  h+='<h3>'+esc(L(CASE.missionH))+'</h3><ol class="steps">'+CASE.mission.map(function(x){return '<li>'+esc(L(x))+'</li>';}).join('')+'</ol></div>';
+  h+='<div class="pager"><span></span><button type="button" class="btn" data-act="tab" data-tab="learn">'+esc(L(CASE.start))+'</button></div>';
+  return h;
+}
+
+/* ---------- render ---------- */
+var main=document.getElementById('main');
+function applyPrefs(){
+  var r=document.documentElement;
+  r.setAttribute('data-size', String(S.prefs.size||0));
+  if(S.prefs.contrast) r.setAttribute('data-contrast','high'); else r.removeAttribute('data-contrast');
+  r.setAttribute('data-spacing', S.prefs.spacing?'on':'off');
+  r.setAttribute('data-motion', S.prefs.motion?'reduce':'full');
+  document.querySelectorAll('[data-size]').forEach(function(b){ if(b.tagName==='BUTTON') b.setAttribute('aria-pressed', String(+b.getAttribute('data-size')===(S.prefs.size||0))); });
+  document.getElementById('pContrast').checked=!!S.prefs.contrast; document.getElementById('pSpacing').checked=!!S.prefs.spacing; document.getElementById('pMotion').checked=!!S.prefs.motion;
+}
+function renderChrome(){
+  document.documentElement.lang = S.lang==='bm'?'ms':'en';
+  document.title = t('appTitle')+': '+(S.lang==='bm'?'kes perpustakaan UKM':'UKM library case');
+  document.getElementById('skipLink').textContent=t('skip');
+  document.getElementById('appTitle').textContent=t('appTitle');
+  document.getElementById('appSub').innerHTML=esc(t('appSub'))+'<span class="vbadge">v'+VERSION+'</span>';
+  document.getElementById('a11yLbl').textContent=t('a11y');
+  document.getElementById('sizeLbl').textContent=t('size');
+  document.getElementById('contrastLbl').textContent=t('contrast');
+  document.getElementById('spacingLbl').textContent=t('spacing');
+  document.getElementById('motionLbl').textContent=t('motion');
+  document.querySelectorAll('[data-lang]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-lang')===S.lang)); });
+  document.getElementById('foot').textContent=t('foot');
+  renderTabs();
+}
+function renderTabs(){
+  var n=ACTIVITIES.filter(function(k){return S.progress[k];}).length;
+  var h=TABS.map(function(k){ return '<button type="button" data-act="tab" data-tab="'+k+'"'+(S.tab===k?' aria-current="page"':'')+'>'+esc(t('tabs')[k])+'</button>'; }).join('');
+  h+='<span class="prog">'+n+' '+esc(t('prog').replace('{n}',ACTIVITIES.length))+'</span>';
+  document.getElementById('tabs').innerHTML=h;
+}
+function renderMain(focus){
+  stopSpeak();
+  if(S.tab==='learn') done('learn-'+S.learn);
+  main.innerHTML = S.tab==='case'?caseHTML(): S.tab==='learn'?learnHTML(): S.tab==='simulate'?simHubHTML(): S.tab==='practice'?practiceHTML(): builderHTML();
+  if(focus){ var h=document.getElementById(focus==='step'?'stepH':'pageH'); if(h){ if(!h.hasAttribute('tabindex')) h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
+}
+function render(focus){ renderChrome(); renderMain(focus); }
+function go(tab){ if(TABS.indexOf(tab)<0) tab='case'; S.tab=tab; if(location.hash!=='#'+tab){ try{ history.replaceState(null,'','#'+tab); }catch(e){ location.hash=tab; } } renderTabs(); renderMain('page'); window.scrollTo(0,0); }
+
+/* ---------- events ---------- */
+document.addEventListener('click', function(e){
+  var b=e.target.closest('[data-lang]'); if(b && b.tagName==='BUTTON'){ S.lang=b.getAttribute('data-lang'); save(); render(); announce(S.lang==='bm'?'Bahasa Melayu dipilih':'English selected'); return; }
+  var sz=e.target.closest('button[data-size]'); if(sz){ S.prefs.size=+sz.getAttribute('data-size'); save(); applyPrefs(); return; }
+  if(e.target.closest('#a11yBtn')){ var p=document.getElementById('a11yPanel'), o=!p.classList.contains('open'); p.classList.toggle('open',o); document.getElementById('a11yBtn').setAttribute('aria-expanded',String(o)); return; }
+  var a=e.target.closest('[data-act]'); if(!a) return;
+  var act=a.getAttribute('data-act'), i=+a.getAttribute('data-i');
+  if(act==='tab'){ stopAllSims(); go(a.getAttribute('data-tab')); }
+  else if(act==='learnGo'){ stopAllSims(); S.learn=i; save(); renderMain('step'); }
+  else if(act==='gsSim'){ stopAllSims(); GS.sim=a.getAttribute('data-k'); GS.sc=0; GS.i=0; SEQ.i=0; renderMain(); var pb=main.querySelector('[data-act="gsSim"][data-k="'+GS.sim+'"][aria-pressed]'); if(pb) pb.focus(); announce(L(SIMDEF[GS.sim].n)); }
+  else if(act==='learnJump'){ stopAllSims(); S.learn=i; save(); go('learn'); }
+  else if(act==='gsSc'){ stopGS(); GS.sc=i; GS.i=0; rerenderKeep(); announce(L(curScenList()[GS.sc].n)); }
+  else if(act==='gsNext'){ stopGS(); var gn=gsLen(), first=GS.i===0; if(GS.i<gn) GS.i++; if(GS.i>=gn) done('sim-'+GS.sim); rerenderKeep(); if(GS.i>=gn){ var gb2=main.querySelector('[data-act="gsAuto"]'); if(gb2) gb2.focus(); } if(first) gsFocusView(); gsAnnounce(); }
+  else if(act==='gsBack'){ stopGS(); if(GS.i>0) GS.i--; rerenderKeep(); if(GS.i===0){ var gnx=main.querySelector('[data-act="gsNext"]'); if(gnx) gnx.focus(); } if(GS.i>0) gsAnnounce(); else announce(L({en:'Back at the start',bm:'Kembali ke permulaan'})); }
+  else if(act==='gsAuto'){ if(GS.running){ stopGS(); rerenderKeep(); announce(L({en:'Paused',bm:'Dijeda'})); } else { if(GS.i>=gsLen()) GS.i=0; GS.running=true; gsTick(); gsFocusView(); } }
+  else if(act==='gsReset'){ stopGS(); GS.i=0; rerenderKeep(); announce(L({en:'Simulation reset',bm:'Simulasi ditetapkan semula'})); }
+  else if(act==='seqsc'){ stopSeq(); SEQ.sc=i; SEQ.i=0; rerenderKeep(); announce(L(seqData().sc.n)); }
+  else if(act==='seqnext'){ stopSeq(); var sn=seqData().sc.msgs.length; if(SEQ.i<sn) SEQ.i++; if(SEQ.i>=sn) done('learn-4'); rerenderKeep(); seqFocusFix(); seqAnnounce(); }
+  else if(act==='seqauto'){ if(SEQ.running){ stopSeq(); rerenderKeep(); announce(L({en:'Paused',bm:'Dijeda'})); } else { if(SEQ.i>=seqData().sc.msgs.length) SEQ.i=0; SEQ.running=true; seqTick(); } }
+  else if(act==='seqreset'){ stopSeq(); SEQ.i=0; rerenderKeep(); announce(L({en:'Simulation reset',bm:'Simulasi ditetapkan semula'})); }
+  else if(act==='playauto'){ if(PLAY.running){ stopPlay(); rerenderKeep(); announce(L({en:'Paused',bm:'Dijeda'})); } else { if(PLAY.i>=SCRIPT.length) PLAY.i=0; PLAY.running=true; tick(); } }
+  else if(act==='playstep'){ stopPlay(); if(PLAY.i>=SCRIPT.length) PLAY.i=0; playStep(); rerenderKeep(); }
+  else if(act==='resetex'){ resetExample(i); rerenderKeep(); announce(L({en:'Example reset',bm:'Contoh ditetapkan semula'})); }
+  else if(act==='resetall'){ [0,1,2,3,4].forEach(resetExample); rerenderKeep(); announce(L({en:'All examples reset',bm:'Semua contoh ditetapkan semula'})); }
+  else if(act==='practiceGo'){ S.practice=i; save(); renderMain('step'); }
+  else if(act==='builderStepGo'){ S.builder=i; save(); renderMain('step'); }
+  else if(act==='speak'){ var el=document.getElementById(a.getAttribute('data-target')); if(el){ var tx=el.innerText; if(!tx||!tx.trim()) tx=el.textContent; speak(tx); } }
+  else if(act==='stopspeak'){ stopSpeak(); }
+  else if(act==='editinst'){ editInst=a.getAttribute('data-u'); instErr=''; renderMain(); var ef=main.querySelector('[data-form="inst"] input[name="name"]'); if(ef) ef.focus(); }
+  else if(act==='cancelinst'){ var cu=editInst; editInst=null; instErr=''; renderMain(); var cb=main.querySelector('[data-act="editinst"][data-u="'+cu+'"]'); if(cb) cb.focus(); }
+  else if(act==='delinst'){ var du=a.getAttribute('data-u'), dm=instBy(du); if(!dm) return;
+    var idx=S.instances.indexOf(dm), inSim=(S.sim.borrower===du||S.sim.reserver===du), inPlay=PLAY.i>0 && idx<2;
+    if((inSim||inPlay) && !confirm(L({en:dm.name+' is part of the step 2 simulation. Deleting them resets the book copy. Delete anyway?',bm:dm.name+' terlibat dalam simulasi langkah 2. Memadam mereka akan menetapkan semula naskhah. Padam juga?'}))) return;
+    S.instances.splice(idx,1); if(editInst===du){ editInst=null; instErr=''; }
+    if(inSim||inPlay){ stopPlay(); PLAY.i=0; S.sim=freshSim(); }
+    if(S.actor===du) S.actor=null;
+    save(); renderMain(); announce(L({en:'Deleted ',bm:'Dipadam: '})+dm.name);
+    var nx=main.querySelectorAll('[data-act="delinst"]'); var tgt=nx[Math.min(idx,nx.length-1)]||main.querySelector('[data-form="inst"] input[name="name"]'); if(tgt) tgt.focus(); }
+  else if(act==='sim'){ stopPlay(); simSend(a.getAttribute('data-m')); renderMain(); var nb=main.querySelector('[data-m="'+a.getAttribute('data-m')+'"]'); if(nb) nb.focus(); }
+  else if(act==='simreset'){ S.sim={state:'available',reserved:false,renewals:0,log:[]}; renderMain(); announce(L({en:'Copy reset to Available',bm:'Naskhah ditetapkan semula kepada Tersedia'})); var rb=main.querySelector('[data-act="simreset"]'); if(rb) rb.focus(); }
+  else if(act==='gal'){ S.gallery=i; save(); renderMain(); var gb=main.querySelector('[data-act="gal"][data-i="'+i+'"]'); if(gb) gb.focus(); }
+  else if(act==='check'){ var k=a.getAttribute('data-k'); S[k+'Checked']=true; renderMain(); var sc=main.querySelector('.score'); if(sc){ sc.setAttribute('tabindex','-1'); sc.focus(); } }
+  else if(act==='retry'){ var k2=a.getAttribute('data-k'); S[k2+'Checked']=false; if(k2==='order') S.order=[3,0,5,2,1,4]; else S[k2]={}; renderMain('step'); }
+  else if(act==='mv'){ var p2=+a.getAttribute('data-p'), d=+a.getAttribute('data-d'), q=p2+d; if(q<0||q>=S.order.length) return; var tmp=S.order[p2]; S.order[p2]=S.order[q]; S.order[q]=tmp; renderMain();
+    var nbtn=main.querySelector('[data-act="mv"][data-p="'+q+'"][data-d="'+d+'"]')||main.querySelector('[data-act="mv"][data-p="'+q+'"]'); if(nbtn) nbtn.focus(); announce(L(ORDER[S.order[q]])+': '+(q+1)); }
+  else if(act==='editcls'){ editId=a.getAttribute('data-id'); renderMain(); var f=main.querySelector('[data-form="cls"] input[name="name"]'); if(f) f.focus(); }
+  else if(act==='canceledit'){ editId=null; renderMain(); }
+  else if(act==='delcls'){ var did=a.getAttribute('data-id'); S.model.classes=S.model.classes.filter(function(c){return c.id!==did;}); S.model.rels=S.model.rels.filter(function(r){return r.from!==did&&r.to!==did;}); S.checkResult=null; save(); renderMain(); announce(L({en:'Class deleted',bm:'Kelas dipadam'})); }
+  else if(act==='delrel'){ S.model.rels.splice(i,1); S.checkResult=null; save(); renderMain(); announce(L({en:'Relationship deleted',bm:'Hubungan dipadam'})); }
+  else if(act==='starter'){ if(confirm(L({en:'Replace your diagram with the starter?',bm:'Gantikan rajah anda dengan permulaan?'}))){ S.model=starter(); S.checkResult=null; save(); renderMain(); } }
+  else if(act==='answer'){ if(confirm(L({en:'Replace your diagram with the model answer? Try on your own first if you can.',bm:'Gantikan rajah anda dengan jawapan model? Cuba sendiri dahulu jika boleh.'}))){ S.model=modelAnswer(); S.checkResult=null; save(); renderMain(); } }
+  else if(act==='clear'){ if(confirm(L({en:'Remove every class and relationship?',bm:'Buang semua kelas dan hubungan?'}))){ S.model={classes:[],rels:[]}; S.checkResult=null; save(); renderMain(); } }
+  else if(act==='checkmodel'){ checkModel(); renderMain(); var s2=main.querySelector('.score'); if(s2){ s2.setAttribute('tabindex','-1'); s2.focus(); } }
+  else if(act==='copyuml'){ copyText(toPlant(S.model)); }
+  else if(act==='uccheck'){ S.ucChecked=true; if(ucChecks().every(function(x){return x.ok;})) done('builder-uc'); document.getElementById('ucRes').innerHTML=ucResults(); var s3=document.querySelector('#ucRes .score'); if(s3){ s3.setAttribute('tabindex','-1'); s3.focus(); } }
+  else if(act==='ucexample'){ S.uc=JSON.parse(JSON.stringify(UCEX[S.lang])); S.ucChecked=false; save(); renderMain(); }
+  else if(act==='ucclear'){ S.uc={name:'',actor:'',desc:'',pre:'',steps:'',alt:'',post:'',assume:''}; S.ucChecked=false; save(); renderMain(); }
+  else if(act==='uccopy'){ copyText(ucText()); }
+});
+document.addEventListener('change', function(e){
+  var el=e.target;
+  if(el.id==='pContrast'){ S.prefs.contrast=el.checked; save(); applyPrefs(); return; }
+  if(el.id==='pSpacing'){ S.prefs.spacing=el.checked; save(); applyPrefs(); return; }
+  if(el.id==='pMotion'){ S.prefs.motion=el.checked; save(); applyPrefs(); return; }
+  if(el.id==='actorSel'){ S.actor=el.value; rerenderKeep(); var as=document.getElementById('actorSel'); if(as) as.focus(); announce(L({en:'Acting member: ',bm:'Ahli bertindak: '})+who(S.actor)); return; }
+  if(el.id==='gsSpeed'){ GS.speed=+el.value; if(GS.running){ clearTimeout(GS.timer); GS.timer=setTimeout(gsTick, GS.speed); } return; }
+  if(el.id==='seqSpeed'){ SEQ.speed=+el.value; if(SEQ.running){ clearTimeout(SEQ.timer); SEQ.timer=setTimeout(seqTick, SEQ.speed); } return; }
+  if(el.id==='playSpeed'){ PLAY.speed=+el.value; if(PLAY.running){ clearTimeout(PLAY.timer); PLAY.timer=setTimeout(tick, PLAY.speed); } return; }
+  var act=el.getAttribute('data-act'); if(!act) return; var k=+el.getAttribute('data-k');
+  if(act==='quizpick') S.quiz[k]=+el.value;
+  if(act==='cardpick') S.card[k]=el.value;
+  if(act==='matchpick') S.match[k]= el.value===''? undefined : +el.value;
+  if(act==='whichpick') S.which[k]= el.value===''? undefined : +el.value;
+});
+document.addEventListener('input', function(e){
+  var el=e.target;
+  if(el.id==='days'){ S.days=+el.value; save(); document.getElementById('daysOut').textContent=S.days; document.getElementById('fineOut').innerHTML=fineCards(S.days); return; }
+  if(el.getAttribute('data-act')==='ucin'){ S.uc[el.name]=el.value; save(); var pv=document.getElementById('ucPrev'); if(pv) pv.innerHTML=ucPreview(); if(S.ucChecked){ document.getElementById('ucRes').innerHTML=ucResults(); } }
+});
+document.addEventListener('submit', function(e){
+  var f=e.target, kind=f.getAttribute('data-form'); if(!kind) return; e.preventDefault();
+  if(kind==='inst'){ var n=f.querySelector('[name="name"]').value.trim(), id=f.querySelector('[name="id"]').value.trim(), ty=f.querySelector('[name="type"]').value;
+    function bad(msg, field){ instErr=msg; renderMain(); var fi=main.querySelector('[data-form="inst"] [name="'+field+'"]'); if(fi) fi.focus(); announce(msg); }
+    if(!n){ bad(L({en:'Enter a name.',bm:'Masukkan nama.'}),'name'); return; }
+    if(!id){ bad(L({en:'Enter a member ID.',bm:'Masukkan ID ahli.'}),'id'); return; }
+    var dup=S.instances.filter(function(x){ return x.id.toLowerCase()===id.toLowerCase() && x.uid!==editInst; })[0];
+    if(dup){ bad(L({en:'Member ID '+id+' is already used by '+dup.name+'. Each instance needs its own identity.',bm:'ID ahli '+id+' sudah digunakan oleh '+dup.name+'. Setiap tika memerlukan identiti sendiri.'}),'id'); return; }
+    instErr='';
+    if(editInst){ var em=instBy(editInst); if(em){ var old=em.type; em.name=n; em.id=id; em.type=ty; announce(L({en:'Updated ',bm:'Dikemas kini: '})+n+(old!==ty?L({en:'. Class changed to ',bm:'. Kelas ditukar kepada '})+CLS[ty]:'')); } var eu=editInst; editInst=null; save(); done('learn-0'); renderMain(); var bb=main.querySelector('[data-act="editinst"][data-u="'+eu+'"]'); if(bb) bb.focus(); }
+    else { S.instances.push({uid:uid(),name:n,id:id,type:ty}); save(); done('learn-0'); renderMain(); announce(L({en:'Instance created: ',bm:'Tika dicipta: '})+n); var nf=main.querySelector('[data-form="inst"] input[name="name"]'); if(nf) nf.focus(); }
+  }
+  if(kind==='cls'){ var nm=f.querySelector('[name="name"]').value.trim(); if(!nm) return; var at=lines(f.querySelector('[name="attrs"]').value), me=lines(f.querySelector('[name="methods"]').value);
+    if(editId){ S.model.classes.forEach(function(c){ if(c.id===editId){ c.name=nm; c.attrs=at; c.methods=me; } }); editId=null; announce(L({en:'Class saved: ',bm:'Kelas disimpan: '})+nm); }
+    else { var cnt=S.model.classes.length; S.model.classes.push({id:uid(),name:nm,attrs:at,methods:me,x:30+(cnt%3)*250,y:30+Math.floor(cnt/3)*230}); announce(L({en:'Class added: ',bm:'Kelas ditambah: '})+nm); }
+    S.checkResult=null; save(); renderMain(); var cf=main.querySelector('[data-form="cls"] input[name="name"]'); if(cf) cf.focus(); }
+  if(kind==='rel'){ var fr=f.querySelector('[name="from"]').value, to=f.querySelector('[name="to"]').value; if(!fr||!to||fr===to){ announce(L({en:'Choose two different classes.',bm:'Pilih dua kelas yang berbeza.'})); return; }
+    var kd=f.querySelector('[name="kind"]').value; S.model.rels.push({from:fr,to:to,kind:kd,label:kd==='inherit'?'':f.querySelector('[name="label"]').value.trim(),m1:kd==='inherit'?'':f.querySelector('[name="m1"]').value,m2:kd==='inherit'?'':f.querySelector('[name="m2"]').value});
+    S.checkResult=null; save(); renderMain(); announce(L({en:'Relationship added',bm:'Hubungan ditambah'})); var rf=main.querySelector('[data-form="rel"] select[name="kind"]'); if(rf) rf.focus(); }
+});
+function copyText(s){
+  function fallback(){ var ta=document.createElement('textarea'); ta.value=s; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); var ok=false; try{ ok=document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); announce(ok? L({en:'Copied',bm:'Disalin'}) : L({en:'Copy failed. Select the text and copy it manually.',bm:'Gagal menyalin. Pilih teks dan salin secara manual.'})); }
+  try{ if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(s).then(function(){ announce(L({en:'Copied',bm:'Disalin'})); }, fallback); } else fallback(); }catch(e){ fallback(); }
+}
+/* drag & keyboard move in builder */
+var drag=null;
+function svgPoint(svg, ev){ var pt=svg.createSVGPoint(); pt.x=ev.clientX; pt.y=ev.clientY; var m=svg.getScreenCTM(); return m? pt.matrixTransform(m.inverse()) : {x:0,y:0}; }
+function redrawCanvas(keepFocus){ var cv=document.getElementById('canvas'); if(!cv) return; cv.innerHTML=classSVG(S.model,true,L({en:'Your class diagram',bm:'Rajah kelas anda'})); if(keepFocus){ var g=cv.querySelector('[data-id="'+keepFocus+'"]'); if(g) g.focus(); } }
+document.addEventListener('pointerdown', function(e){ var g=e.target.closest('#canvas .cbox'); if(!g) return; var svg=g.ownerSVGElement, id=g.getAttribute('data-id'); var c=S.model.classes.filter(function(x){return x.id===id;})[0]; if(!c) return;
+  var p=svgPoint(svg,e); drag={id:id, dx:p.x-c.x, dy:p.y-c.y}; e.preventDefault(); });
+window.addEventListener('pointermove', function(e){ if(!drag) return; var svg=document.querySelector('#canvas svg'); if(!svg) return; var p=svgPoint(svg,e); var c=S.model.classes.filter(function(x){return x.id===drag.id;})[0]; if(!c) return;
+  c.x=Math.max(0,Math.round(p.x-drag.dx)); c.y=Math.max(0,Math.round(p.y-drag.dy)); redrawCanvas(); });
+window.addEventListener('pointerup', function(){ if(drag){ drag=null; save(); var pu=document.getElementById('puml'); if(pu) pu.textContent=toPlant(S.model); } });
+document.addEventListener('keydown', function(e){ var g=e.target.closest && e.target.closest('#canvas .cbox'); if(!g) return; var step=e.shiftKey?40:10, dx=0, dy=0;
+  if(e.key==='ArrowLeft') dx=-step; else if(e.key==='ArrowRight') dx=step; else if(e.key==='ArrowUp') dy=-step; else if(e.key==='ArrowDown') dy=step; else return;
+  e.preventDefault(); var id=g.getAttribute('data-id'); var c=S.model.classes.filter(function(x){return x.id===id;})[0]; if(!c) return; c.x=Math.max(0,c.x+dx); c.y=Math.max(0,c.y+dy); save(); redrawCanvas(id); });
+window.addEventListener('hashchange', function(){ var h=location.hash.replace('#',''); if(TABS.indexOf(h)>=0 && h!==S.tab){ S.tab=h; renderTabs(); renderMain('page'); } });
+
+/* ---------- init ---------- */
+load();
+ensureUids();
+var h0=location.hash.replace('#',''); if(TABS.indexOf(h0)>=0) S.tab=h0;
+applyPrefs(); render();
+})();
+</script>
+</body>
+</html>
+
+</body></html>
